@@ -1,0 +1,79 @@
+﻿@* 
+@model Event_Tree_Website.ViewModels.EventManagementViewModel
+
+<div class="text-center" style="margin-top: 50px";> <h2>Chi tiết sự kiện</h2> </div>
+<div class="body">
+    <hr />
+    <dl class="dl-horizontal">
+        <dt class="col-sm-2">Tên Sự Kiện</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Events.Name)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Số Lượng Tồn</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.Nums)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Giá Gốc</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.Price)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Mô tả Sản phẩm</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.Detail)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Hình ảnh sản phẩm</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                <img src="~/images/@Model.Product.Img1" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+            </div>
+        </dd>
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Product.Order)</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.Order)
+            </div>
+        </dd>
+        <dt class="col-sm-2"><text>Tình Trạng</text></dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @{
+                    if (Model.Product.Hide == 0)
+                    {
+                        <text>Hiển thị</text>
+                    }
+                    else if (Model.Product.Hide == 1)
+                    {
+                        <text>Ẩn</text>
+                    }
+                }
+            </div>
+        </dd>
+        <dt class="col-sm-2">Giảm giá</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.Discount)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Giá Sốc</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Product.PromotionPrice)
+            </div>
+        </dd>
+    </dl>
+</div>
+<div>
+    <div class="col-sm-10" style="margin-bottom: 28px;">
+        <a asp-action="Edit" asp-route-id="@Model.Product.IdPro" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+    </div>
+</div>
+ *@

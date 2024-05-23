@@ -1,0 +1,132 @@
+﻿@using System.Security.Claims;
+@model Event_Tree_Website.ViewModels.ContactViewModel
+
+
+<div class="navbar">
+    <div class="navbar__left">
+        <a asp-controller="Home" asp-action="Index" class="navbar__logo">
+            <img src="https://img.freepik.com/premium-vector/alphabetical-letter-e-logo-collection_647881-448.jpg" alt="">
+        </a>
+
+        <div class="navbar__menu">
+            <i id="bars" class="fa fa-bars" aria-hidden="true"></i>
+            <ul class="navmenu">
+                @foreach (var item in Model.Menus)
+                {
+                    <li><a href="/@item.Link">@item.Title</a></li>
+                }
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div class="navbar__center">
+        <div class="search-container">
+            <form method="get" asp-controller="Event" asp-action="TimKiem" class="navbar__search" id="formSearch">
+                <div class="input-group">
+                    <input class="keyword" type="text" name="keyword" id="keyword" class="form-control" placeholder="Nhập để tìm kiếm..." autocomplete="on" required />
+                    <div class="input-group-append">
+                        <button type="submit" id="searchBtn" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+                <div id="suggestions" class="autocomplete-suggestions list-group"></div>
+                
+
+            </form>
+        </div>
+    </div>
+    
+
+    <div class="navbar__right">
+        <div style="display: flex; align-items: center;">
+            <div class="login" id="loginClick">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    string permission = User.FindFirst(ClaimTypes.Role)?.Value;
+                    <span>
+                        @User.Identity.Name &nbsp;<i class="fa-solid fa-chevron-down"></i>
+
+                    </span>
+
+                    <ul class="login_list">
+                        <li><a asp-controller="User" asp-action="Info">Thông tin cá nhân</a></li>
+                        @if (permission == "2")
+                        {
+
+                            <li><a asp-controller="Employee" asp-action="Index">Quản Lý Đơn Hàng</a></li>
+                            <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý Sản Phẩm</a></li>
+                        }
+                        @if (permission == "1")
+                        {
+
+                            <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý Sản Phẩm</a></li>
+                            <li><a asp-controller="Employee" asp-action="Index">Quản Lý Đơn Hàng</a></li>
+                            <li><a asp-controller="Catologies" asp-action="Index">Quản Lý Danh Mục</a></li>
+                            <li><a asp-controller="Account" asp-action="Index">Quản Lý Tài Khoản</a></li>
+
+                        }
+                        <li><a asp-controller="CartDetail" asp-action="Index">Đơn hàng</a></li>
+                        <li>
+                            <form asp-controller="User" asp-action="SignOut" method="post">
+                                <button type="submit" style="border: none; outline: none; background: transparent;">
+                                    Đăng xuất &nbsp;<span class="fas fa-sign-out-alt"></span>
+                                </button>
+                            </form>
+                        </li>
+
+                    </ul>
+                }
+                else
+                {
+                    <div class="login">
+                        <a asp-controller="Account" asp-action="Login"><i class="fa fa-user"></i></a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css">
+
+<script>
+    $(document).ready(function () {
+        var currentRequest = null; // Biến để lưu trữ request hiện tại
+
+        $('#keyword').keyup(function () {
+            var keyword = $(this).val().trim(); // Loại bỏ khoảng trắng đầu và cuối
+            if (keyword.length >= 1) {
+                if (currentRequest !== null) {
+                    currentRequest.abort(); // Hủy request trước nếu có
+                }
+
+                currentRequest = $.ajax({
+                    url: '/Event/GetSuggestions',
+                    type: 'GET',
+                    data: { keyword: keyword },
+                    success: function (data) {
+                        $('#suggestions').empty();
+                        $.each(data, function (index, value) {
+                            $('#suggestions').append('<div class="suggestion">' + value + '</div>');
+                        });
+                    }
+                });
+            } else {
+                $('#suggestions').empty();
+            }
+        });
+
+        // Xử lý khi người dùng chọn một gợi ý từ danh sách
+        $(document).on('click', '.suggestion', function () {
+            var selectedSuggestion = $(this).text(); // Lấy giá trị của gợi ý được chọn
+            $('#keyword').val(selectedSuggestion); // Điền giá trị của gợi ý vào thanh tìm kiếm
+            $('#suggestions').empty(); // Xóa danh sách gợi ý
+        });
+    });
+</script>
+
+

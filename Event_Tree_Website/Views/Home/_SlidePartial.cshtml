@@ -1,0 +1,23 @@
+﻿@model Event_Tree_Website.ViewModels.HomeViewModel
+
+@{
+    var _count = 0;
+    foreach (var item in Model.Sliders) _count++;
+}
+<div class="post-slider">
+    <i class="fa fa-chevron-left prev" aria-hidden="true"></i>
+    <i class="fa fa-chevron-right next" aria-hidden="true"></i>
+
+    <div class="post-wrapper">
+		<div class="post">
+			<img src="~/images/sliders/slider-1.png" />
+
+
+		</div>
+        <div class="post">
+            <img src="~/images/sliders/slider-2.png" />
+           
+        </div>
+    </div>
+
+</div>

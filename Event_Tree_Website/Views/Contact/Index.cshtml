@@ -1,0 +1,56 @@
+﻿@model Event_Tree_Website.ViewModels.ContactViewModel
+
+<div class="body" style="margin-top: 50px;">
+	<div class="body__mainTitle d-flex justify-content-between align-items-center">
+		<h2>Thông tin liên hệ</h2>
+	</div>
+
+	<div class="panel panel-primary" style="background-color :paleturquoise">
+		<div class="panel-heading panel-heading-prod">
+			<i class="fa fa-info-circle"></i>
+			Phản hồi với EVENTS
+		</div>
+		<div class="panel-body">
+			<form asp-action="SubmitFeedback" method="post" class="form-horizontal">
+				<div class="form-group">
+					<label class="col-md-2" for="txtusername">Họ và tên:</label>
+					<div class="col-md-10">
+						<input type="text" class="form-control" id="txtusername"
+							   placeholder="Nhập họ và tên" name="FullName">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2" for="txtemail">Email:</label>
+					<div class="col-md-10">
+						<input type="email" class="form-control" id="txtemail"
+							   placeholder="Nhập địa chỉ email" name="Email">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2" for="txttitle">Tiêu đề:</label>
+					<div class="col-md-10">
+						<input type="text" class="form-control" id="txttitle"
+							   placeholder="Nhập tiêu đề" name="Title">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-md-2" for="txtdetail">Nội dung:</label>
+					<div class="col-md-10">
+						<textarea class="form-control" id="txtdetail" rows="5"
+								  placeholder="Nhập nội dung" name="Content"></textarea>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<button type="submit" id="btnSend" class="btn btn-danger">
+							<i class="fa fa-external-link"></i> Gửi
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+</div>
+

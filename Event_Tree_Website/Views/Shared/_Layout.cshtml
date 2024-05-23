@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVENT</title>
+   
+    <meta name="description" content="Website SỰ KIỆN" />
+    <meta name="copyright" content="EVENT'S'" />
+    <meta name="author" content="EVENT'S'" />
+    <link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/css/style.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" />
+
+</head>
+<body>
+    <div class="header">
+        @await Html.PartialAsync("_MenuPartial")
+    </div>
+    <div class="go-to-top"><i class="fas fa-chevron-up"></i></div>
+    @RenderBody()
+    <footer>
+        <div class="footer">
+            <div class="footer__title">
+                <span>Liên hệ</span>
+                <div class="footer__social">
+                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-google"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer__info">
+
+            <div class="footer__info-content">
+                <h3>Giới thiệu</h3>
+                <p>Cung cấp các thông tin trong nước và nước ngoài</p>
+            </div>
+
+
+
+            <div class="footer__info-content">
+                <h3>Liên hệ</h3>
+                <p>Địa chỉ: Đại học Công nghệ thành phố Hồ Chí Minh Khu E, Phường Tân Phú, Quận 9, Thành phố Hồ Chí Minh, Việt Nam</p>
+                <p>Email: Event@gmail.com</p>
+                <p>Sđt: 1234567890 </p>
+            </div>
+
+            <div class="footer__info-content">
+
+                <h3>Fanpage</h3>
+                <img width="315" src="~/images/screenshot 2024-04-04 090750.png" />
+
+            </div>
+
+        </div>
+        <div class="footer__copyright">
+            <center> Design by: Chau va Bao</center>
+        </div>
+
+
+    </footer>
+
+
+
+    @*  chỉnh slide *@
+    <script src="~/Content/scripts/script.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
