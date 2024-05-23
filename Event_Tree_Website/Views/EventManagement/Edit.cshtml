@@ -1,0 +1,74 @@
+﻿@model Event_Tree_Website.ViewModels.EventManagementViewModel
+
+
+<div class="body fix-width scroll-inner" style="margin-top: 50px;">
+
+    <div class="body__mainTitle d-flex justify-content-between align-items-center">
+        <h2>CHỈ SỮA SỰ KIỆN</h2>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-10">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Events.Name" class="control-label">TÊN SỰ KIỆN</label>
+                    <input asp-for="Events.Name" class="form-control" required />
+                    <span asp-validation-for="Events.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Events.DateTime" class="control-label">THỜI GIAN SỰ KIỆN</label>
+                    <input asp-for="Events.DateTime" class="form-control" required min="0" />
+                    <span asp-validation-for="Events.DateTime" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Events.Description" class="control-label">MÔ TẢ</label>
+                    <input asp-for="Events.Description" class="form-control" required />
+                    <span asp-validation-for="Events.Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Events.Detail" class="control-label">CHI TIẾT</label>
+                    <input asp-for="Events.Detail" class="form-control" required />
+                    <span asp-validation-for="Events.Detail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Events.ImageCode" class="control-label">HÌNH ẢNH</label>
+                    <input asp-for="Events.ImageCode" type="file" name="files" class="form-control" onchange="displaySelectedFile(this)" />
+                    <input type="text" id="imgFileName" class="form-control" value="@Model.Events.ImageCode" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Events.Link" class="control-label">Link</label>
+                    <input asp-for="Events.Link" class="form-control" required />
+                    <span asp-validation-for="Events.Link" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Events.Hide" class="control-label">TRẠNG THÁI</label>
+                    <select asp-for="Events.Hide" class="form-control" asp-items="@Model.HideOptions">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="Events.Hide" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function displaySelectedFile(input) {
+        if (input.files && input.files.length > 0) {
+            var fileName = input.files[0].name;
+            document.getElementById('imgFileName').value = fileName;// để chắc chắn chỉ đặt giá trị cho input của ảnh thay vì tất cả các input trong form.
+        }
+    }
+</script>
