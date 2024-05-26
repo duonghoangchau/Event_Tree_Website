@@ -42,8 +42,7 @@ namespace Event_Tree_Website.Controllers
 		{
 			var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
-			var cateEvent = await _context.Categories
-			.Where(cp => cp.IdCategory == id && cp.Link == slug).FirstOrDefaultAsync();
+			var cateEvent = await _context.Categories.Where(cp => cp.IdCategory == id && cp.Link == slug).FirstOrDefaultAsync();
 			if (cateEvent == null)
 			{
 				var errorViewModel = new ViewModels.ErrorViewModel
@@ -53,7 +52,7 @@ namespace Event_Tree_Website.Controllers
 				return View("Error", errorViewModel);
 			}
 			var events = await _context.Events.Where(m => m.Hide == 0 && m.IdCategory == cateEvent.IdCategory)
-			.OrderBy(m => m.DateTime).ToListAsync();
+			.OrderByDescending(m => m.DateTime).ToListAsync();
 			var viewModel = new EventViewModel
 			{
 				Menus = menus,

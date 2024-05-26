@@ -1,7 +1,8 @@
-﻿@* 
+﻿
 @model Event_Tree_Website.ViewModels.EventManagementViewModel
 
-<div class="text-center" style="margin-top: 50px";> <h2>Chi tiết sự kiện</h2> </div>
+<div class="text-center" style="margin-top: 50px";>
+    <h2>Chi tiết sự kiện</h2> </div>
 <div class="body">
     <hr />
     <dl class="dl-horizontal">
@@ -11,69 +12,70 @@
                 @Html.DisplayFor(model => model.Events.Name)
             </div>
         </dd>
-        <dt class="col-sm-2">Số Lượng Tồn</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.Nums)
+        <dt class="col-sm-2">Thời Gian Sự Kiện</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Events.DateTime)
             </div>
         </dd>
-        <dt class="col-sm-2">Giá Gốc</dt>
+        <dt class="col-sm-2">Mô Tả Sự Kiện</dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.Price)
+                @Html.DisplayFor(model => model.Events.Description)
             </div>
         </dd>
-        <dt class="col-sm-2">Mô tả Sản phẩm</dt>
+        <dt class="col-sm-2">Chi Tiết Sự Kiện</dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.Detail)
+                @Html.DisplayFor(model => model.Events.Detail)
             </div>
         </dd>
-        <dt class="col-sm-2">Hình ảnh sản phẩm</dt>
+        <dt class="col-sm-2">Hình Ảnh Sự Kiện</dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                <img src="~/images/@Model.Product.Img1" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
-            </div>
-        </dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Product.Order)</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.Order)
+                <img src="~/images/@Model.Events.ImageCode" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
             </div>
         </dd>
         <dt class="col-sm-2"><text>Tình Trạng</text></dt>
         <dd class="col-sm-10">
             <div class="border p-2">
                 @{
-                    if (Model.Product.Hide == 0)
+                    if (Model.Events.Hide == 0)
                     {
                         <text>Hiển thị</text>
                     }
-                    else if (Model.Product.Hide == 1)
+                    else if (Model.Events.Hide == 1)
                     {
                         <text>Ẩn</text>
                     }
                 }
             </div>
         </dd>
-        <dt class="col-sm-2">Giảm giá</dt>
+        <dt class="col-sm-2">Danh Mục </dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.Discount)
+                @Html.DisplayFor(model => model.Events.IdCategory)
             </div>
         </dd>
-        <dt class="col-sm-2">Giá Sốc</dt>
+        <dt class="col-sm-2">Ngày Tạo Sự Kiện</dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                @Html.DisplayFor(model => model.Product.PromotionPrice)
+                @Html.DisplayFor(model => model.Events.CreatedAt)
             </div>
         </dd>
+        <dt class="col-sm-2">Ngày Sửa Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Events.UpdatedAt)
+            </div>
+        </dd>
+
     </dl>
-</div>
-<div>
-    <div class="col-sm-10" style="margin-bottom: 28px;">
-        <a asp-action="Edit" asp-route-id="@Model.Product.IdPro" class="btn btn-primary">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+    <div>
+        <div class="col-sm-10" style="margin-bottom: 28px;">
+            <a asp-action="Edit" asp-route-id="@Model.Events.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+        </div>
     </div>
 </div>
- *@
+

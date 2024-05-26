@@ -1,6 +1,6 @@
 ﻿@model Event_Tree_Website.ViewModels.EventManagementViewModel
 
-<div class="body" style="padding-top: 30px; margin-top: 50px;">
+<div class="body" style="margin-top: 50px;">
     <div class="body__mainTitle">
         <h2>Quản lý các sự kiện</h2>
     </div>
@@ -24,7 +24,7 @@
             @TempData["SuccessMessage"]
         </div>
     }
-    <div class="body fix-width scroll-inner">
+    <div class="a">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -33,6 +33,7 @@
                     <th>hình ảnh</th>
                     <th>mô tả</th>
                     <th>ngày tạo</th>
+                    <th>trạng thái</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -55,6 +56,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            @(item.Hide == 0 ? "Hiển thị" : "Ẩn")
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@item.Id" class="text-primary f2"><i class="fa-solid fa-eye"></i></a>
