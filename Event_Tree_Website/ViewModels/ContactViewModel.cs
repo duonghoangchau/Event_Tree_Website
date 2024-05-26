@@ -2,7 +2,7 @@
 
 namespace Event_Tree_Website.ViewModels
 {
-    internal class ContactViewModel
+    public class ContactViewModel
     {
         public List<Menu> Menus { get; set; }
     }

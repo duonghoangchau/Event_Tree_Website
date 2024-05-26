@@ -2,7 +2,7 @@
 
 namespace Event_Tree_Website.ViewModels
 {
-    internal class EventViewModel
+    public class EventViewModel
     {
         internal string cateName;
 

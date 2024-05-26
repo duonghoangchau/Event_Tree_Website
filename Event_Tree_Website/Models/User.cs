@@ -14,11 +14,13 @@ namespace Event_Tree_Website.Models
         }
 
         public int Id { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
         public string? Fullname { get; set; }
         public string? Email { get; set; }
         public DateTime? Birthday { get; set; }
         public int? Gender { get; set; }
-        public int? AccountId { get; set; }
+        public int? Provide { get; set; }
         public int? Role { get; set; }
         public int? PremiumId { get; set; }
         public DateTime? PremiumDate { get; set; }
@@ -28,7 +30,6 @@ namespace Event_Tree_Website.Models
         public bool? Status { get; set; }
         public string? Avatar { get; set; }
 
-        public virtual Account? Account { get; set; }
         public virtual Premium? Premium { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Contribution> Contributions { get; set; }

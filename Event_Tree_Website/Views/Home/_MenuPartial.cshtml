@@ -31,49 +31,44 @@
                     </div>
                 </div>
                 <div id="suggestions" class="autocomplete-suggestions list-group"></div>
-                
+
 
             </form>
         </div>
     </div>
-    
+
 
     <div class="navbar__right">
         <div style="display: flex; align-items: center;">
             <div class="login" id="loginClick">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    string permission = User.FindFirst(ClaimTypes.Role)?.Value;
                     <span>
                         @User.Identity.Name &nbsp;<i class="fa-solid fa-chevron-down"></i>
                     </span>
 
                     <ul class="login_list">
-                        <li><a asp-controller="User" asp-action="Info">Thông tin cá nhân</a></li>
-                        @if (permission == "2")
+                        <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
+                        @if (User.IsInRole("0"))
                         {
-
                             <li><a asp-controller="Employee" asp-action="Index">Quản Lý Đơn Hàng</a></li>
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý Sản Phẩm</a></li>
                         }
-                        @if (permission == "1")
+                        @if (User.IsInRole("1"))
                         {
-
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý Sản Phẩm</a></li>
                             <li><a asp-controller="Employee" asp-action="Index">Quản Lý Đơn Hàng</a></li>
                             <li><a asp-controller="Catologies" asp-action="Index">Quản Lý Danh Mục</a></li>
                             <li><a asp-controller="Account" asp-action="Index">Quản Lý Tài Khoản</a></li>
-
                         }
                         <li><a asp-controller="CartDetail" asp-action="Index">Đơn hàng</a></li>
                         <li>
-                            <form asp-controller="User" asp-action="SignOut" method="post">
+                            <form asp-controller="Account" asp-action="Logout" method="post">
                                 <button type="submit" style="border: none; outline: none; background: transparent;">
                                     Đăng xuất &nbsp;<span class="fas fa-sign-out-alt"></span>
                                 </button>
                             </form>
                         </li>
-
                     </ul>
                 }
                 else
@@ -84,7 +79,6 @@
                 }
             </div>
         </div>
-
     </div>
 </div>
 
