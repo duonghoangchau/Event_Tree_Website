@@ -47,9 +47,29 @@ app.UseEndpoints(endpoints =>
     defaults: new { controller = "Contact", action = "Index" });
 
     endpoints.MapControllerRoute(
-   name: "ql_su_kien",
-   pattern: "ql_event",
-   defaults: new { controller = "EventManagement", action = "Index" });
+    name: "ql_su_kien",
+    pattern: "ql_event",
+    defaults: new { controller = "EventManagement", action = "Index" });
+
+    endpoints.MapControllerRoute(
+    name: "ql_danhmuc",
+    pattern: "ql_danhmuc",
+    defaults: new { controller = "Category", action = "Index" });
+
+    endpoints.MapControllerRoute(
+    name: "chi-tiet-danh-muc",
+    pattern: "chi-tiet-danh-muc/{id}",
+    defaults: new { controller = "Category", action = "Details" });
+
+    endpoints.MapControllerRoute
+    (name: "tao-danh-muc",
+    pattern: "tao-danh-muc",
+    defaults: new { controller = "Category", action = "Create" });
+
+    endpoints.MapControllerRoute
+    (name: "chinh-sua-danh-muc",
+    pattern: "chinh-sua-danh-muc/{id}",
+    defaults: new { controller = "Category", action = "Edit" });
 
     endpoints.MapControllerRoute(
     name: "tim-kiem",

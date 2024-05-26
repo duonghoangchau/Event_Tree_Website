@@ -37,12 +37,11 @@ namespace Event_Tree_Website.Controllers
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            var totalItems = await _context.Events.Where(m => m.Hide == 0).CountAsync(); // Tổng số sản phẩm
+            var totalItems = await _context.Events.CountAsync(); // Tổng số sản phẩm
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize); // Tính tổng số trang
 
-            var eves = await _context.Events.Where(m => m.Hide == 0)
-                                                .OrderByDescending(m => m.DateTime)
+            var eves = await _context.Events.OrderByDescending(m => m.DateTime)
                                                 .Skip((page - 1) * pageSize)
                                                 .Take(pageSize)
                                                 .ToListAsync(); // Lấy sự kiện cho trang hiện tại
@@ -346,7 +345,7 @@ namespace Event_Tree_Website.Controllers
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công.";
+                    TempData["SuccessMessage"] = "Cập nhật sự kiện thành công.";
                     return RedirectToAction("Index"); // Điều hướng đến trang chính sau khi chỉnh sửa thành công
                 }
                 catch (DbUpdateConcurrencyException)

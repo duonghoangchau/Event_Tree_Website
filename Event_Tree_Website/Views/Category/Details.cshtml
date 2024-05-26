@@ -1,0 +1,58 @@
+﻿@model Event_Tree_Website.ViewModels.CategoryViewModel
+
+<div class="text-center" style="margin-top: 50px" ;>
+    <h2>Chi tiết danh mục sự kiện</h2>
+</div>
+<div class="body">
+    <hr />
+    <dl class="dl-horizontal">
+        <dt class="col-sm-2">Tên danh mục</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Category.Name)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Order</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Category.Order)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Trạng thái</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @{
+                    if (Model.Category.Hide == 0)
+                    {
+                        <text>Hiển thị</text>
+                    }
+                    else if (Model.Category.Hide == 1)
+                    {
+                        <text>Ẩn</text>
+                    }
+                }
+            </div>
+        </dd>
+        <dt class="col-sm-2">idParent</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Category.IdParent)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Link </dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Category.Link)
+            </div>
+        </dd>
+       
+
+    </dl>
+    <div>
+        <div class="col-sm-10" style="margin-bottom: 28px;">
+            <a asp-action="Edit" asp-route-id="@Model.Category.IdCategory" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+
