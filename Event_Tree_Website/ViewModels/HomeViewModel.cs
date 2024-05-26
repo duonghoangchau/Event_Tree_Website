@@ -2,7 +2,7 @@
 
 namespace Event_Tree_Website.ViewModels
 {
-    internal class HomeViewModel
+    public class HomeViewModel
     {
         public List<Menu> Menus { get; set; }
         public List<Slider> Sliders { get; set; }

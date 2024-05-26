@@ -1,4 +1,5 @@
 using Event_Tree_Website.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,11 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
+AddCookie(options =>
+{
+    options.Cookie.Name = "Event_Tree_Cookie";
+    options.LoginPath = "/Account/Login";
+});
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var connectionString =
 builder.Configuration.GetConnectionString("Event_TreeConnection");
 builder.Services.AddDbContext<Event_TreeContext>(options => options.UseSqlServer(connectionString));
-
-builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -22,12 +35,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
-app.UseAuthorization();
-app.UseSession();
+app.UseAuthentication();
 
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
@@ -42,14 +55,29 @@ app.UseEndpoints(endpoints =>
     defaults: new { controller = "Event", action = "Index" });
 
     endpoints.MapControllerRoute(
+    name: "dang-ky",
+    pattern: "dang-ky",
+    defaults: new { controller = "Account", action = "Register" });
+
+    endpoints.MapControllerRoute(
+    name: "dang-nhap",
+    pattern: "dang-nhap",
+    defaults: new { controller = "Account", action = "Login" });
+
+    endpoints.MapControllerRoute(
+    name: "dang-xuat",
+    pattern: "dang-xuat",
+    defaults: new { controller = "Account", action = "Logout" });
+
+    endpoints.MapControllerRoute(
     name: "lien-he",
     pattern: "lien-he",
     defaults: new { controller = "Contact", action = "Index" });
 
     endpoints.MapControllerRoute(
-   name: "ql_su_kien",
-   pattern: "ql_event",
-   defaults: new { controller = "EventManagement", action = "Index" });
+    name: "ql_su_kien",
+    pattern: "ql_event",
+    defaults: new { controller = "EventManagement", action = "Index" });
 
     endpoints.MapControllerRoute(
     name: "tim-kiem",
@@ -65,6 +93,11 @@ app.UseEndpoints(endpoints =>
     name: "chi-tiet-su-kien",
     pattern: "su-kien/{slug}-{id}",
     defaults: new { controller = "Event", action = "EventDetail" });
+
+    endpoints.MapControllerRoute(
+    name: "thong-tin",
+    pattern: "thong-tin",
+    defaults: new { controller = "Account", action = "Info" });
 
     app.MapControllerRoute(
     name: "default",

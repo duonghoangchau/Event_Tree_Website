@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Event_Tree_Website.ViewModels
 {
-    internal class EventManagementViewModel
+    public class EventManagementViewModel
     {
         internal string cateName;
 

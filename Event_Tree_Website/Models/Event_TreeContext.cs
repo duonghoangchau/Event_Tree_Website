@@ -16,7 +16,6 @@ namespace Event_Tree_Website.Models
         {
         }
 
-        public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Contribution> Contributions { get; set; } = null!;
@@ -35,53 +34,12 @@ namespace Event_Tree_Website.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-13VMKLD;Database=Event_Tree;Trusted_Connection=True;TrustServerCertificate=true;");
+                optionsBuilder.UseSqlServer("Server=FUYANA;Database=Event_Tree;Trusted_Connection=True;TrustServerCertificate=\n true;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>(entity =>
-            {
-                entity.ToTable("accounts");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
-
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("deleted_at");
-
-                entity.Property(e => e.Info)
-                    .HasMaxLength(250)
-                    .HasColumnName("info");
-
-                entity.Property(e => e.Password)
-                    .IsUnicode(false)
-                    .HasColumnName("password");
-
-                entity.Property(e => e.Provide)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("provide");
-
-                entity.Property(e => e.Token)
-                    .IsUnicode(false)
-                    .HasColumnName("token");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.Username)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("username");
-            });
-
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.HasKey(e => e.IdCategory)
@@ -426,8 +384,6 @@ namespace Event_Tree_Website.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.AccountId).HasColumnName("account_id");
-
                 entity.Property(e => e.Avatar)
                     .HasMaxLength(20)
                     .HasColumnName("avatar");
@@ -455,11 +411,18 @@ namespace Event_Tree_Website.Models
 
                 entity.Property(e => e.Gender).HasColumnName("gender");
 
+                entity.Property(e => e.Password)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("password");
+
                 entity.Property(e => e.PremiumDate)
                     .HasColumnType("datetime")
                     .HasColumnName("premium_date");
 
                 entity.Property(e => e.PremiumId).HasColumnName("premium_id");
+
+                entity.Property(e => e.Provide).HasColumnName("provide");
 
                 entity.Property(e => e.Role).HasColumnName("role");
 
@@ -469,10 +432,10 @@ namespace Event_Tree_Website.Models
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
 
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_users_accounts");
+                entity.Property(e => e.Username)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("username");
 
                 entity.HasOne(d => d.Premium)
                     .WithMany(p => p.Users)
