@@ -12,6 +12,8 @@ AddCookie(options =>
 {
     options.Cookie.Name = "Event_Tree_Cookie";
     options.LoginPath = "/Account/Login";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
 });
 
 builder.Services.AddSession(options =>
