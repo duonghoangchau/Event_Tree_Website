@@ -75,6 +75,17 @@ app.UseEndpoints(endpoints =>
     defaults: new { controller = "Contact", action = "Index" });
 
     endpoints.MapControllerRoute(
+    name: "su-kien-ca-nhan",
+    pattern: "su-kien-ca-nhan",
+    defaults: new { controller = "PersonalEvent", action = "Index" });
+
+    endpoints.MapControllerRoute(
+    name: "quan_ly_su-kien-ca-nhan",
+    pattern: "quan_ly_su-kien-ca-nhan",
+    defaults: new { controller = "PersonalEventManagement", action = "Index" });
+
+
+    endpoints.MapControllerRoute(
     name: "ql_su_kien",
     pattern: "ql_event",
     defaults: new { controller = "EventManagement", action = "Index" });

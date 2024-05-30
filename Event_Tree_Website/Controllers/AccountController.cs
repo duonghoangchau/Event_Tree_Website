@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Event_Tree_Website.Controllers
 {
@@ -17,7 +18,7 @@ namespace Event_Tree_Website.Controllers
             db = context;
         }
 
-        [HttpGet]
+
         public async Task<IActionResult> _MenuPartial()
         {
             return PartialView();
@@ -92,8 +93,7 @@ namespace Event_Tree_Website.Controllers
             };
             if (model.Register != null)
             {
-                var user = await db.Users.Where(m => m.Status == true).FirstOrDefaultAsync(u => u.Username ==
-               model.Register.Username);
+                var user = await db.Users.Where(m => m.Status == true).FirstOrDefaultAsync(u => u.Username == model.Register.Username);
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Register.Password,
                user.Password))
                 {
@@ -124,23 +124,27 @@ namespace Event_Tree_Website.Controllers
         }
         public async Task<IActionResult> Info()
         {
-            var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m =>
-           m.MenuOrder).ToListAsync();
-            var users = new User();
-            if (User.Identity.IsAuthenticated)
+            //var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+
+            //var users = new User();
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    string username = User.Identity.Name;
+            //    if (username != null)
+            //    {
+            //        users = await db.Users.FirstOrDefaultAsync(m => m.Username == username);
+            //    }
+            //}
+            //var viewModel = new UserViewModel
             {
-                string username = User.Identity.Name;
-                if (username != null)
-                {
-                    users = await db.Users.FirstOrDefaultAsync(m => m.Username ==
-                   username);
-                }
-            }
-            var viewModel = new UserViewModel
-            {
-                Menus = menus,
-                Register = users,
+                //Menus = menus,
+                //Register = users,
             };
+            //return View(viewModel);
+
+            var viewModel = new UserViewModel { };
+
+
             return View(viewModel);
         }
         public async Task<IActionResult> Logout()
@@ -148,5 +152,92 @@ namespace Event_Tree_Website.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditInfo()
+        {
+            var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+
+
+            // Lấy thông tin người dùng hiện tại đang đăng nhập
+            var currentUser = await GetCurrentUserAsync();
+
+            // Kiểm tra xem người dùng có tồn tại không
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "User"); // Chuyển hướng về trang đăng nhập nếu không có người dùng nào đăng nhập
+            }
+
+            var viewModel = new UserViewModel
+            {
+                Menus = menus,
+                Register = currentUser,
+            };
+
+            return View(viewModel);
+        }
+
+        // Helper method để lấy thông tin người dùng hiện tại từ database
+        private async Task<User> GetCurrentUserAsync()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                string username = User.Identity.Name;
+                if (username != null)
+                {
+                    return await db.Users.FirstOrDefaultAsync(m => m.Username == username);
+                }
+            }
+            return null;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveInfo(UserViewModel model)
+        {
+            var currentUser = await GetCurrentUserAsync();
+
+            if (currentUser == null)
+            {
+                return RedirectToAction("Login", "User");
+            }
+            else
+            {
+                // Update user information
+                currentUser.Username = model.Register.Username;
+                currentUser.Fullname = model.Register.Fullname;
+                currentUser.Email = model.Register.Email;
+                currentUser.Birthday = model.Register.Birthday;
+
+                if (!string.IsNullOrEmpty(model.Register.Password) && !string.IsNullOrEmpty(model.ConfirmPassword))
+                {
+                    // If password fields are not empty, update password
+                    if (model.Register.Password == model.ConfirmPassword)
+                    {
+                        currentUser.Password = BCrypt.Net.BCrypt.HashPassword(model.Register.Password);
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "Mật khẩu và xác nhận mật khẩu không khớp.";
+                        return View("EditInfo", model);
+                    }
+                }
+
+                try
+                {
+                    db.Users.Update(currentUser);
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    ViewBag.ErrorMessage = "Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.";
+                    return View("EditInfo", model);
+                }
+            }
+
+        }
+
     }
 }
