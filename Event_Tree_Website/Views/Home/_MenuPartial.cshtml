@@ -3,7 +3,6 @@
 
 
 
-
 <div class="navbar">
     <div class="navbar__left">
         <a asp-controller="Home" asp-action="Index" class="navbar__logo">
@@ -50,19 +49,25 @@
                     </span>
 
                     <ul class="login_list">
-                        <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
                         @if (User.IsInRole("0"))
                         {
+                            <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
                             <li><a asp-controller="Premium" asp-action="Index">Mua gói sự kiện</a></li>
                             <li><a asp-controller="PersonalEvent" asp-action="Index">Sự kiện cá nhân</a></li>
-
                         }
                         @if (User.IsInRole("1"))
                         {
-                            <li><a asp-controller="EventManagement" asp-action="Index">Quản Lý Sự Kiện</a></li>
+                            <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
+                            <li><a asp-controller="EventManagement" asp-action="Index">Quản Lý sự kiện</a></li>
                             <li><a asp-controller="PersonalEventManagement" asp-action="Index">Quản Lý SK người dùng</a></li>
-                            <li><a asp-controller="Category" asp-action="Index">Quản Lý Danh Mục</a></li>
-                            <li><a asp-controller="Account" asp-action="Index">Quản Lý Tài Khoản</a></li>
+                            <li><a asp-controller="Category" asp-action="Index">Quản lý danh mục</a></li>
+                        }
+                        @if (User.IsInRole("2"))
+                        {
+                            <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
+                            <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý sự kiện</a></li>
+                            <li><a asp-controller="Catologies" asp-action="Index">Quản lý danh mục</a></li>
+                            <li><a asp-controller="AccountManagement" asp-action="Index">Quản lý tài khoản</a></li>
                         }
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">
@@ -124,4 +129,7 @@
         });
     });
 </script>
+
+
+
 
