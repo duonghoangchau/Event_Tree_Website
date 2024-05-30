@@ -1,0 +1,57 @@
+﻿@model Event_Tree_Website.ViewModels.AccountViewModel
+<div class="body" style="padding-top: 30px; margin-top: 50px;">
+    <h4>User</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-10">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="User.Id" />
+                <div class="form-group">
+                    <label asp-for="User.Username" class="control-label"></label>
+                    <input asp-for="User.Username" class="form-control" readonly />
+                    <span asp-validation-for="User.Username" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.Fullname" class="control-label"></label>
+                    <input asp-for="User.Fullname" class="form-control" readonly />
+                    <span asp-validation-for="User.Fullname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Email" class="control-label"></label>
+                    <input asp-for="User.Email" class="form-control" readonly />
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Birthday" class="control-label"></label>
+                    <input asp-for="User.Birthday" class="form-control" readonly />
+                    <span asp-validation-for="User.Birthday" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.Role" class="control-label">Quyền Truy Cập</label>
+                    <select asp-for="User.Role" class="form-control" asp-items="@Model.PerOptions">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="User.Role" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.Status" class="control-label">Hide</label>
+                    <select asp-for="User.Status" class="form-control" asp-items="@Model.HideOptions">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="User.Status" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>

@@ -18,6 +18,7 @@ namespace Event_Tree_Website.ViewModels
         [StringLength(100, ErrorMessage = "Mật khẩu mới phải dài từ 6 đến 100 ký tự")]
         public string Password { get; set; }
 
+        [Required(ErrorMessage = "Nhập lại mật khẩu là bắt buộc.")]
         [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp")]
         public string ConfirmPassword { get; set; }
     }

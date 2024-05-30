@@ -1,5 +1,6 @@
 ﻿using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace Event_Tree_Website.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "1,2")]
         public async Task<IActionResult> Index()
         {
             var pres = await _context.Premiums

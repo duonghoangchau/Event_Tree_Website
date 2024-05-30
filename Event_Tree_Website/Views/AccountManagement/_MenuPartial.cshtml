@@ -1,5 +1,5 @@
 ﻿@using System.Security.Claims;
-@model Event_Tree_Website.ViewModels.HomeViewModel
+@model Event_Tree_Website.ViewModels.AccountViewModel
 
 
 <div class="navbar">
@@ -52,14 +52,12 @@
                         {
                             <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản lý sự kiện</a></li>
-                            <li><a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a></li>
                         }
                         @if (User.IsInRole("1"))
                         {
                             <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý sự kiện</a></li>
                             <li><a asp-controller="Catologies" asp-action="Index">Quản lý danh mục</a></li>
-                            <li><a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a></li>
                         }
                         @if (User.IsInRole("2"))
                         {
@@ -67,7 +65,6 @@
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý sự kiện</a></li>
                             <li><a asp-controller="Catologies" asp-action="Index">Quản lý danh mục</a></li>
                             <li><a asp-controller="AccountManagement" asp-action="Index">Quản lý tài khoản</a></li>
-                            <li><a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a></li>
                         }
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">

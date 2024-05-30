@@ -1,0 +1,83 @@
+﻿@model Event_Tree_Website.ViewModels.UserViewModel
+
+<div id="viewUserInfo">
+    <div class="body" style="padding-top: 30px; margin-top: 50px;">
+        <h1>Chỉnh sửa thông tin người dùng</h1>
+        <form asp-action="SaveInfo" method="post">
+            <div class="form-group">
+                <label asp-for="Register.Username">Tên đăng nhập:</label>
+                <input asp-for="Register.Username" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="Register.Fullname">Họ và tên:</label>
+                <input asp-for="Register.Fullname" name="Register.Fullname" class="form-control" required />
+                <span asp-validation-for="Register.Fullname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Register.Email">Email:</label>
+                <input asp-for="Register.Email" name="Register.Email" class="form-control" required />
+                <span asp-validation-for="Register.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Register.Birthday">Ngày sinh:</label>
+                <input asp-for="Register.Birthday" name="Register.Birthday" class="form-control" required />
+                <span asp-validation-for="Register.Birthday" class="text-danger"></span>
+            </div>
+
+            @* <div class="form-group">
+            <label asp-for="Register.Password">Mật khẩu mới:</label>
+            <input type="password" class="form-control" id="Password" name="Register.Password" asp-for="Register.Password" required
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+            title="Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất một chữ số, một chữ thường và một chữ hoa." />
+            <span asp-validation-for="Register.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+            <label asp-for="ConfirmPassword">Nhập lại mật khẩu mới:</label>
+            <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required
+            placeholder="Nhập lại mật khẩu" required
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+            title="Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất một chữ số, một chữ thường và một chữ hoa."
+            oninput="checkPasswordMatch(this);" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div> *@
+
+            <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+            <a asp-controller="Account" asp-action="Info" class="btn btn-primary"> Hủy</a>
+
+        </form>
+    </div>
+</div>
+<script>
+    // Khi trang được load
+    window.onload = function () {
+        activateInputs(); // Kích hoạt các input để cho phép chỉnh sửa
+        loadUserInfo(); // Load dữ liệu từ ViewModel vào các input
+    };
+
+    // Kích hoạt các input để cho phép chỉnh sửa
+    function activateInputs() {
+        document.getElementById("fullnameInput").readOnly = false;
+        document.getElementById("emailInput").readOnly = false;
+        document.getElementById("birthdayInput").readOnly = false;
+        /* document.getElementById("ConfirmPassword").readOnly = false; */ // Kích hoạt trường ConfirmPassword để cho phép chỉnh sửa
+    }
+
+    // Load dữ liệu từ ViewModel vào các input
+    function loadUserInfo() {
+        var viewModel = @Html.Raw(Json.Serialize(Model)); // Convert ViewModel sang JSON
+        document.getElementById("fullnameInput").value = viewModel.Register.Fullname;
+        document.getElementById("emailInput").value = viewModel.Register.Email;
+        document.getElementById("birthdayInput").value = viewModel.Register.Birthday;
+    }
+
+    // Kiểm tra xem mật khẩu nhập lại có khớp với mật khẩu chính xác hay không
+    /*function checkPasswordMatch(input) {
+        var passwordInput = document.getElementById('Password');
+        var confirmPasswordInput = input;
+        if (passwordInput.value !== confirmPasswordInput.value) {
+            confirmPasswordInput.setCustomValidity('Mật khẩu không khớp');
+        } else {
+            confirmPasswordInput.setCustomValidity('');
+        }
+    }*/
+</script>

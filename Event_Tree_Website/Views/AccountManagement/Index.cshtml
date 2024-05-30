@@ -1,0 +1,98 @@
+﻿@model Event_Tree_Website.ViewModels.AccountViewModel
+
+<div class="body" style="padding-top: 30px; margin-top: 50px;">
+    <div class="body__mainTitle">
+        <h2>Quản lý các tài khoản</h2>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+
+                    UserName
+                </th>
+
+                <th>
+
+                    Họ và Tên
+                </th>
+                <th>
+
+                    Email
+                </th>
+                <th>
+
+                    Ngày sinh
+                </th>
+                <th>
+
+                    Quyền
+                </th>
+                <th>
+
+                    Trạng thái
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Users)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Username)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fullname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Birthday)
+                    </td>
+                    <td>
+
+                        <div>
+                            @{
+                                if (item.Role == 0)
+                                {
+                                    <text>Khách hàng</text>
+                                }
+                                else if (item.Role == 1)
+                                {
+                                    <text>Quản Lý</text>
+                                }
+                                else if (item.Role == 2)
+                                {
+                                    <text>Admin</text>
+                                }
+                            }
+                        </div>
+                    </td>
+
+
+                    <td>
+
+                        <div>
+                            @{
+                                if (item.Status == true)
+                                {
+                                    <text>Đang hoạt động</text>
+                                }
+                                else if (item.Status == false)
+                                {
+                                    <text>Đã vô hiệu</text>
+                                }
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
