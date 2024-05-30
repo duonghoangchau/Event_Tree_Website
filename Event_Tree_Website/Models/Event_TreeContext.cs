@@ -35,7 +35,7 @@ namespace Event_Tree_Website.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-13VMKLD;Database=Event_Tree;Trusted_Connection=True;TrustServerCertificate=\n true;");
+                optionsBuilder.UseSqlServer("Server=FUYANA;Database=Event_Tree;Trusted_Connection=True;TrustServerCertificate=\n true;");
             }
         }
 
@@ -315,6 +315,8 @@ namespace Event_Tree_Website.Models
 
                 entity.Property(e => e.Hide).HasColumnName("hide");
 
+                entity.Property(e => e.IdUser).HasColumnName("id_user");
+
                 entity.Property(e => e.ImageCode)
                     .HasMaxLength(255)
                     .HasColumnName("image_code");
@@ -328,6 +330,12 @@ namespace Event_Tree_Website.Models
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("smalldatetime")
                     .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.IdUserNavigation)
+                    .WithMany(p => p.PersonalEvents)
+                    .HasForeignKey(d => d.IdUser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_personalEvent_users");
             });
 
             modelBuilder.Entity<Premium>(entity =>

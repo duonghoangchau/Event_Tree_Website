@@ -102,8 +102,9 @@ app.UseEndpoints(endpoints =>
         name: "lien-he",
         pattern: "lien-he",
         defaults: new { controller = "Contact", action = "Index" });
-  
-    name: "su-kien-ca-nhan",
+    
+    endpoints.MapControllerRoute(
+      name: "su-kien-ca-nhan",
     pattern: "su-kien-ca-nhan",
     defaults: new { controller = "PersonalEvent", action = "Index" });
 

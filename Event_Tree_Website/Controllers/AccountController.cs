@@ -198,7 +198,6 @@ namespace Event_Tree_Website.Controllers
         {
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             var currentUser = await GetCurrentUserAsync();
-
             if (currentUser == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -208,6 +207,7 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Register = currentUser,
+
             };
 
             return View(viewModel);
