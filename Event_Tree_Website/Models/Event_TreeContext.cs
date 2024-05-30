@@ -30,6 +30,8 @@ namespace Event_Tree_Website.Models
         public virtual DbSet<Tree> Trees { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
+        public virtual DbSet<PersonalEvent> PersonalEvents { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -315,6 +317,8 @@ namespace Event_Tree_Website.Models
 
                 entity.Property(e => e.Hide).HasColumnName("hide");
 
+                entity.Property(e => e.IdUser).HasColumnName("id_user");
+
                 entity.Property(e => e.ImageCode)
                     .HasMaxLength(255)
                     .HasColumnName("image_code");
@@ -328,6 +332,11 @@ namespace Event_Tree_Website.Models
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("smalldatetime")
                     .HasColumnName("updated_at");
+
+                entity.HasOne(d => d.IdUserNavigation)
+                    .WithMany(p => p.PersonalEvents)
+                    .HasForeignKey(d => d.IdUser)
+                    .HasConstraintName("FK_personalEvent_users");
             });
 
             modelBuilder.Entity<Premium>(entity =>
