@@ -4,7 +4,8 @@ namespace Event_Tree_Website.ViewModels
 {
     public class EventViewModel
     {
-        internal string cateName;
+
+        internal string? cateName;
 
         public List<Menu> Menus { get; set; }
         public List<Event> Eves { get; set; }

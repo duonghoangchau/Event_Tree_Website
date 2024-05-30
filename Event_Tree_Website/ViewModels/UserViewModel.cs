@@ -7,11 +7,13 @@ namespace Event_Tree_Website.ViewModels
     public class UserViewModel
     {
         public List<Menu> Menus { get; set; }
+
         public User Register { get; set; }
         public UserViewModel()
         {
             Register = new User();
         }
+
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu hiện tại")]
         public string CurrentPassword { get; set; }
 
@@ -21,5 +23,6 @@ namespace Event_Tree_Website.ViewModels
         [Required(ErrorMessage = "Nhập lại mật khẩu là bắt buộc.")]
         [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp")]
         public string ConfirmPassword { get; set; }
+
     }
 }

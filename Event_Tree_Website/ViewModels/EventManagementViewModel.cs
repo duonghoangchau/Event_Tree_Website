@@ -5,7 +5,7 @@ namespace Event_Tree_Website.ViewModels
 {
     public class EventManagementViewModel
     {
-        internal string cateName;
+        internal string? cateName;
 
         public List<Menu> Menus { get; set; }
         public Event Events { get; set; }
@@ -13,5 +13,6 @@ namespace Event_Tree_Website.ViewModels
         public int TotalPages { get; internal set; }
         public int CurrentPage { get; internal set; }
         public List<SelectListItem> HideOptions { get; internal set; }
+        
     }
 }

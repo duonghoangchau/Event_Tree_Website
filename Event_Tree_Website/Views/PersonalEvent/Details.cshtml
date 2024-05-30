@@ -1,0 +1,75 @@
+﻿@model Event_Tree_Website.ViewModels.PersonalEventViewModel
+
+<div class="text-center" style="margin-top: 50px" ;>
+    <h2>Chi tiết sự kiện cá nhân</h2>
+</div>
+<div class="body">
+    <hr />
+    <dl class="dl-horizontal">
+        <dt class="col-sm-2">Tên Sự Kiện</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Personals.Name)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Thời Gian Sự Kiện</dt>
+        <dd class="col-sm-10    ">
+            <div class="border p-1">
+                @Html.DisplayFor(model => model.Personals.DateTime)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Mô Tả Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Personals.Description)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Chi Tiết Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Personals.Detail)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Hình Ảnh Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                <img src="~/images/@Model.Personals.ImageCode" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+            </div>
+        </dd>
+        <dt class="col-sm-2"><text>Tình Trạng</text></dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @{
+                    if (Model.Personals.Hide == 0)
+                    {
+                        <text>Hiển thị</text>
+                    }
+                    else if (Model.Personals.Hide == 1)
+                    {
+                        <text>Ẩn</text>
+                    }
+                }
+            </div>
+        </dd>
+        <dt class="col-sm-2">Ngày Tạo Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Personals.CreatedAt)
+            </div>
+        </dd>
+        <dt class="col-sm-2">Ngày Sửa Sự Kiện</dt>
+        <dd class="col-sm-10">
+            <div class="border p-2">
+                @Html.DisplayFor(model => model.Personals.UpdatedAt)
+            </div>
+        </dd>
+
+    </dl>
+    <div>
+        <div class="col-sm-10" style="margin-bottom: 28px;">
+            <a asp-action="Edit" asp-route-id="@Model.Personals.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+        </div>
+    </div>
+</div>
+

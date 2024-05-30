@@ -1,0 +1,74 @@
+﻿@model Event_Tree_Website.ViewModels.PersonalEventViewModel
+
+
+<div class="body fix-width scroll-inner" style="margin-top: 50px;">
+
+    <div class="body__mainTitle d-flex justify-content-between align-items-center">
+        <h2>CHỈNH SỮA SỰ KIỆN</h2>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-10">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.Name" class="control-label">TÊN SỰ KIỆN</label>
+                    <input asp-for="Personals.Name" class="form-control" required />
+                    <span asp-validation-for="Personals.Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.DateTime" class="control-label">THỜI GIAN SỰ KIỆN</label>
+                    <input asp-for="Personals.DateTime" class="form-control" required min="0" />
+                    <span asp-validation-for="Personals.DateTime" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.Description" class="control-label">MÔ TẢ</label>
+                    <input asp-for="Personals.Description" class="form-control" required />
+                    <span asp-validation-for="Personals.Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.Detail" class="control-label">CHI TIẾT</label>
+                    <input asp-for="Personals.Detail" class="form-control" required />
+                    <span asp-validation-for="Personals.Detail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.ImageCode" class="control-label">HÌNH ẢNH</label>
+                    <input asp-for="Personals.ImageCode" type="file" name="files" class="form-control" onchange="displaySelectedFile(this)" />
+                    <input type="text" id="imgFileName" class="form-control" value="@Model.Personals.ImageCode" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Personals.Link" class="control-label">Link</label>
+                    <input asp-for="Personals.Link" class="form-control" required />
+                    <span asp-validation-for="Personals.Link" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Personals.Hide" class="control-label">TRẠNG THÁI</label>
+                    <select asp-for="Personals.Hide" class="form-control" asp-items="@Model.HideOptions">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="Personals.Hide" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function displaySelectedFile(input) {
+        if (input.files && input.files.length > 0) {
+            var fileName = input.files[0].name;
+            document.getElementById('imgFileName').value = fileName;// để chắc chắn chỉ đặt giá trị cho input của ảnh thay vì tất cả các input trong form.
+        }
+    }
+</script>

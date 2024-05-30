@@ -1,46 +1,5 @@
 ﻿@model Event_Tree_Website.ViewModels.HomeViewModel
 
-@* <div class="body">
-	<div class="body__mainTitle">
-		<h2>SỰ KIỆN HOT!!!</h2>
-	</div>
-	<div class="post-slider2">
-		<i class="fa fa-chevron-left prev2" aria-hidden="true"></i>
-		<i class="fa fa-chevron-right next2" aria-hidden="true"></i>
-
-		<div class="row">
-			<div class="post-wrapper2">
-				@if (ViewBag.getSKHOT != null && ViewBag.getSKHOT.Count > 0)
-				{
-					@foreach (var item in ViewBag.getSKHOT)
-					{
-						<div class="col-lg-2_5 col-md-4 col-6 post2">
-							<a asp-controller="Event" asp-action="EventDetail" asp-route-slug="@item.Link" asp-route-id="@item.Id">
-								<div class="product">
-									<div class="product__img">
-										<img src="~/images/@item.ImageCode" class="img-rounded" alt="@item.Name">
-									</div>
-									<div class="product__title">
-										@item.Name
-									</div>
-
-								</div>
-							</a>
-						</div>
-					}
-				}
-				else
-				{
-					<p>Không có sự kiện nào được hiển thị.</p>
-				}
-			</div>
-		</div>
-	</div>
-</div> *@
-
-
-
-
 
 
 @foreach (var item in Model.CategoriesParent)
@@ -64,7 +23,7 @@
 		{
 			<div class="catology cat-@itemSub.IdCategory cat-@itemSub.IdParent @(itemSub.IdCategory == CategoriesChild.First().IdCategory ? "active" : "")">
 				<div class="row">
-					@foreach (var itemProd in Model.Even.Where(p => p.IdCategory == itemSub.IdCategory && (p.Hide == 0 || p.Hide == null)).OrderByDescending(p1 => p1.DateTime).Take(5).ToList())
+					@foreach (var itemProd in Model.Even.Where(p => p.IdCategory == itemSub.IdCategory  && (p.Hide == 0 || p.Hide == null)).OrderByDescending(p1 => p1.DateTime).Take(5).ToList())
 					{
 						<div class="col-lg-2_5 col-md-4 col-6 post2">
 							<a asp-controller="Event" asp-action="EventDetail" asp-route-slug="@itemProd.Link" asp-route-id="@itemProd.Id">
