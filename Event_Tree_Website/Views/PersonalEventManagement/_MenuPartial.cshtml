@@ -1,6 +1,5 @@
 ﻿@using System.Security.Claims;
-@model Event_Tree_Website.ViewModels.PremiumViewModel
-
+@model Event_Tree_Website.ViewModels.PersonalEventManagementViewModel
 
 
 <div class="navbar">
@@ -54,7 +53,7 @@
                         {
                             <li><a asp-controller="Premium" asp-action="Index">Mua gói sự kiện</a></li>
                             <li><a asp-controller="PersonalEvent" asp-action="Index">Sự kiện cá nhân</a></li>
-
+                            
                         }
                         @if (User.IsInRole("1"))
                         {
@@ -123,7 +122,5 @@
         });
     });
 </script>
-
-
 
 

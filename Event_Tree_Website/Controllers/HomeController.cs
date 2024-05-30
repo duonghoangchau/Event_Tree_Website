@@ -27,7 +27,7 @@ namespace Event_Tree_Website.Controllers
             List<Category> categories = _context.Categories.Where(x => x.Hide == 0 || x.Hide == null).ToList();
 
             List<Event> even = _context.Events.ToList();
-            getSKHOT();
+
             var viewModel = new HomeViewModel
             {
                 Menus = menus,
@@ -40,13 +40,6 @@ namespace Event_Tree_Website.Controllers
             return View(viewModel);
         }
 
-        private void getSKHOT()
-        {
-            var list = (from c in _context.Events
-                        where c.Status != null && c.Status == "hot"
-                        select c).ToList();
-            ViewBag.getSKHOT = list;
-        }
 
         public async Task<IActionResult> _MenuPartial()
         {

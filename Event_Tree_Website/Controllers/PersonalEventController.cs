@@ -1,66 +1,57 @@
-﻿using System.Globalization;
+﻿
+using System.Globalization;
 using System.Text;
 using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.Build.Tasks.Deployment.Bootstrapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Event_Tree_Website.Controllers
 {
-    public class EventManagementController : Controller
+    public class PersonalEventController : Controller
     {
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
 
-        public EventManagementController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
+        public PersonalEventController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _hostingEnvironment = hostingEnvironment;
         }
-        private void showDropList()
-        {
-            List<SelectListItem> list = _context.Categories                                       
-                                            .Select(c => new SelectListItem
-                                            {
-                                                Text = c.Name,
-                                                Value = c.IdCategory.ToString()
-                                            })
-                                            .Distinct()
-                                            .ToList();
-            ViewBag.IdCategory = list;
-        }
 
-
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index (int page = 1)
         {
             const int pageSize = 10;
-            var totalItems = await _context.Events.CountAsync(); // Tổng số sản phẩm
+            // Đếm tổng số sự kiện có Status = 1
+            var totalItems = await _context.PersonalEvents.CountAsync();
 
-            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize); // Tính tổng số trang
+            // Tính tổng số trang
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            var eves = await _context.Events.OrderByDescending(m => m.DateTime)
-                                                .Where(e => e.Status == "0")
-                                                .Skip((page - 1) * pageSize)
-                                                .Take(pageSize)
-                                                .ToListAsync(); // Lấy sự kiện cho trang hiện tại
+            // Lấy danh sách sự kiện có Status = 1 cho trang hiện tại
+            var pers = await _context.PersonalEvents
+                                     .OrderByDescending(m => m.DateTime)
+                                     .Skip((page - 1) * pageSize)
+                                     .Take(pageSize)
+                                     .ToListAsync();
 
-            var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+            // Lấy danh sách menu không bị ẩn
+            var menus = await _context.Menus
+                                      .Where(m => m.Hide == 0)
+                                      .OrderBy(m => m.MenuOrder)
+                                      .ToListAsync();
 
-
-
-            var viewModel = new EventManagementViewModel
+            // Tạo ViewModel
+            var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
-                Eves = eves,
+                Pers = pers,
                 TotalPages = totalPages,
                 CurrentPage = page,
-
             };
-
-            return View(viewModel); // Trả về view với AdminViewModel
+            return View(viewModel);
         }
 
         public async Task<IActionResult> _MenuPartial()
@@ -82,21 +73,19 @@ namespace Event_Tree_Website.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            showDropList();
             var menus = await _context.Menus.Where(m => m.Hide == 0).ToListAsync();
-            return View(new EventManagementViewModel { Menus = menus });
+            return View(new PersonalEventViewModel { Menus = menus });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Event events, List<IFormFile> files)
+        public async Task<IActionResult> Create(PersonalEvent personals, List<IFormFile> files)
         {
             if (ModelState.IsValid)
             {
-                events.Hide = 0;
-                events.Status = "0";
-                events.CreatedAt = DateTime.Now;
-                events.UpdatedAt = DateTime.Now;
-                events.DeletedAt = DateTime.Now;
+                personals.Hide = 0;
+                personals.CreatedAt = DateTime.Now;
+                personals.UpdatedAt = DateTime.Now;
+
                 showHideDropdownList();
                 if (files != null && files.Count > 0)
                 {
@@ -116,44 +105,43 @@ namespace Event_Tree_Website.Controllers
                     }
                     // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
                     if (filePaths.Count >= 1)
-                        events.ImageCode = filePaths[0];
+                        personals.ImageCode = filePaths[0];
                 }
 
                 // Tạo một đối tượng AdminViewModel từ Product
-                var viewModel = new EventManagementViewModel
+                var viewModel = new PersonalEventViewModel
                 {
-                    Events = events // gán product vào AdminViewModel
+                    Personals = personals // gán product vào AdminViewModel
                 };
-                _context.Add(events);
+                _context.Add(personals);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
             //showDropList();
-            return View(events);
+            return View(personals);
         }
 
 
         [HttpGet]
         public async Task<IActionResult> Search(int id)
         {
-            var eve = await _context.Events.FirstOrDefaultAsync(m => m.Id == id);
-            if (eve == null)
+            var per = await _context.PersonalEvents.FirstOrDefaultAsync(m => m.Id == id);
+            if (per == null)
             {
-
                 return RedirectToAction("Index");
             }
 
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
-            var viewModel = new EventManagementViewModel
+            var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
-                Events = eve
+                Personals = per
             };
 
             // Chuyển hướng đến trang Edit với IdCart tương ứng
-            return RedirectToAction("Edit", new { id = eve.Id });
+            return RedirectToAction("Edit", new { id = per.Id });
         }
         [HttpPost]
         public async Task<IActionResult> Search(string keyword)
@@ -168,17 +156,17 @@ namespace Event_Tree_Website.Controllers
             string keywordWithoutDiacritics = RemoveDiacritics(keyword);
 
             // Tìm kiếm cả từ có dấu và không dấu
-            var eves = await _context.Events
+            var pers = await _context.PersonalEvents
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.DateTime)
                 .ToListAsync();
 
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
-            var viewModel = new EventManagementViewModel
+            var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
-                Eves = eves,
+                Pers = pers,
                 cateName = keyword // Dùng từ khóa có dấu để hiển thị lại trên giao diện
             };
 
@@ -219,14 +207,14 @@ namespace Event_Tree_Website.Controllers
                 return NotFound();
             }
 
-            var events = await _context.Events.FirstOrDefaultAsync(m => m.Id == id);
-            if (events == null)
+            var personals = await _context.PersonalEvents.FirstOrDefaultAsync(m => m.Id == id);
+            if (personals == null)
             {
                 return NotFound();
             }
-            var viewModel = new EventManagementViewModel
+            var viewModel = new PersonalEventViewModel
             {
-                Events =events,
+                Personals = personals,
                 Menus = menus
             };
             return View(viewModel);
@@ -235,7 +223,7 @@ namespace Event_Tree_Website.Controllers
 
         private bool SukienExists(int id)
         {
-            return _context.Events.Any(e => e.Id == id);
+            return _context.PersonalEvents.Any(e => e.Id == id);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -245,7 +233,7 @@ namespace Event_Tree_Website.Controllers
                 return NotFound();
             }
 
-            var sukien = await _context.Events.FindAsync(id);
+            var sukien = await _context.PersonalEvents.FindAsync(id);
             if (sukien == null)
             {
                 return NotFound();
@@ -255,13 +243,12 @@ namespace Event_Tree_Website.Controllers
             hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
             hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
             // Tạo view model và truyền dữ liệu
-            var viewModel = new EventManagementViewModel
+            var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
-                Events = sukien,
+                Personals = sukien,
                 HideOptions = hideOptions
             };
-            showDropList();
 
             return View(viewModel);
         }
@@ -269,25 +256,25 @@ namespace Event_Tree_Website.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateTime,Description,Detail,ImageCode,Link,Hide,Status")] Event events, List<IFormFile> files)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateTime,Description,Detail,ImageCode,Link,Hide")] PersonalEvent personals, List<IFormFile> files)
         {
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
-            var event1 = await _context.Events.FirstOrDefaultAsync(m => m.Id == id);
-            if (event1 == null)
+            var personal1 = await _context.PersonalEvents.FirstOrDefaultAsync(m => m.Id == id);
+            if (personal1 == null)
             {
                 return NotFound();
             }
             var hideOptions = new List<SelectListItem>();
             hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
             hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
-            var viewModel = new EventManagementViewModel
+            var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
-                Events = event1,
+                Personals = personal1,
                 HideOptions = hideOptions
 
             };
-            if (id != viewModel.Events.Id)
+            if (id != viewModel.Personals.Id)
             {
                 return NotFound();
             }
@@ -316,32 +303,31 @@ namespace Event_Tree_Website.Controllers
                         if (filePaths.Count >= 1)
                         {
                             // Không cần thêm tiền tố "images\" vào đường dẫn
-                            events.ImageCode = filePaths[0];
+                            personals.ImageCode = filePaths[0];
                         }
 
                     }
 
-                    var existingEvent = await _context.Events.FindAsync(id);
+                    var existingPersonalEvent = await _context.PersonalEvents.FindAsync(id);
 
-                    if (existingEvent == null)
+                    if (existingPersonalEvent == null)
                     {
                         return NotFound();
                     }
 
                     // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
-                    existingEvent.Name = events.Name;
-                    existingEvent.DateTime = events.DateTime;
-                    existingEvent.Description = events.Description;
-                    existingEvent.Detail = events.Detail;
-                    existingEvent.ImageCode = events.ImageCode;
-                    existingEvent.Link = events.Link;
-                    existingEvent.Hide = events.Hide;
-                    existingEvent.Status = events.Status;
-                    existingEvent.UpdatedAt = DateTime.Now;
-                    existingEvent.DeletedAt = DateTime.Now;
-                    if (!string.IsNullOrEmpty(events.ImageCode))
+                    existingPersonalEvent.Name = personals.Name;
+                    existingPersonalEvent.DateTime = personals.DateTime;
+                    existingPersonalEvent.Description = personals.Description;
+                    existingPersonalEvent.Detail = personals.Detail;
+                    existingPersonalEvent.ImageCode = personals.ImageCode;
+                    existingPersonalEvent.Link = personals.Link;
+                    existingPersonalEvent.Hide = personals.Hide;
+                    existingPersonalEvent.UpdatedAt = DateTime.Now;
+
+                    if (!string.IsNullOrEmpty(personals.ImageCode))
                     {
-                        existingEvent.ImageCode = events.ImageCode;
+                        existingPersonalEvent.ImageCode = personals.ImageCode;
                     }
 
 
@@ -352,7 +338,7 @@ namespace Event_Tree_Website.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SukienExists(viewModel.Events.Id))
+                    if (!SukienExists(viewModel.Personals.Id))
                     {
                         return NotFound();
                     }
@@ -369,6 +355,4 @@ namespace Event_Tree_Website.Controllers
             return View(viewModel);
         }
     }
-
-
 }

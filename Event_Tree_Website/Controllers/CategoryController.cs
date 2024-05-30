@@ -1,4 +1,6 @@
-﻿using Event_Tree_Website.Models;
+﻿using System.Globalization;
+using System.Text;
+using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -182,6 +184,80 @@ namespace Event_Tree_Website.Controllers
         private bool DanhMucExists(int id)
         {
             return _context.Categories.Any(e => e.IdCategory == id);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> Search(int id)
+        {
+            var cat = await _context.Categories.FirstOrDefaultAsync(m => m.IdCategory == id);
+            if (cat == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+
+            var viewModel = new CategoryViewModel
+            {
+                Menus = menus,
+                Categorys = cat
+            };
+
+            // Chuyển hướng đến trang Edit với IdCart tương ứng
+            return RedirectToAction("Edit", new { id = cat.IdCategory });
+        }
+        [HttpPost]
+        public async Task<IActionResult> Search(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                // Nếu từ khóa trống, hiển thị tất cả sản phẩm
+                return RedirectToAction("Index");
+            }
+
+            // Tạo phiên bản không dấu của từ khóa tìm kiếm
+            string keywordWithoutDiacritics = RemoveDiacritics(keyword);
+
+            // Tìm kiếm cả từ có dấu và không dấu
+            var cats = await _context.Categories
+                .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
+                .OrderBy(m => m.Order)
+                .ToListAsync();
+
+            var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+
+            var viewModel = new CategoryViewModel
+            {
+                Menus = menus,
+                Cats = cats,
+                cateName = keyword // Dùng từ khóa có dấu để hiển thị lại trên giao diện
+            };
+
+            return View("Index", viewModel); // Trả về view Index với dữ liệu đã lọc
+        }
+
+        private string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+
+            text = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+
+            foreach (var c in text)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(c);
+                }
+            }
+
+            return sb.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

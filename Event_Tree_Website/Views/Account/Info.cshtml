@@ -1,8 +1,9 @@
-﻿@model Event_Tree_Website.ViewModels.UserViewModel
+﻿@model Event_Tree_Website.ViewModels.UserViewModel 
+
 
 <div class="body" style="margin-top: 50px;">
     <div class="body__mainTitle">
-        <h2>Thông tin khách hàng</h2>
+        <h2>Thông tin tài khoản</h2>
     </div>
     <form asp-action="EditUser" method="post">
         <div class="row in-1">
@@ -27,16 +28,6 @@
 
         <div class="row in-3">
             <div class="col-md-6">
-                <label>Địa chỉ:</label>
-            </div>
-
-            <div class="col-md-6">
-                <input type="text" class="form-control" asp-for="Register.Birthday" readonly />
-            </div>
-        </div>
-
-        <div class="row in-4">
-            <div class="col-md-6">
                 <label>Email:</label>
             </div>
 
@@ -44,6 +35,26 @@
                 <input type="text" class="form-control" asp-for="Register.Email" readonly />
             </div>
         </div>
+
+        <div class="row in-4">
+            <div class="col-md-6">
+                <label>Ngày sinh:</label>
+            </div>
+
+            <div class="col-md-6">
+                <input type="text" class="form-control" asp-for="Register.Birthday" readonly />
+            </div>
+        </div>
+
+@*         <div class="row in-5">
+        <div class="col-md-6">
+        <label>Số điện thoại:</label>
+        </div>
+
+        <div class="col-md-6">
+        <input type="text" class="form-control" asp-for="Register.Phone" readonly />
+        </div>
+        </div> *@
 
         <center style="margin-top: 30px;">
             <a asp-action="EditInfo" class="btn btn-primary">Chỉnh sửa thông tin</a>
