@@ -1,7 +1,9 @@
-using Event_Tree_Website.Models;
+﻿using Event_Tree_Website.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,9 +26,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(options =>
 {
-    IConfigurationSection googleAuthNSection =
-        builder.Configuration.GetSection("Authentication:Google");
-
+    IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
     options.ClientId = googleAuthNSection["ClientId"];
     options.ClientSecret = googleAuthNSection["ClientSecret"];
     options.CallbackPath = "/signin-google";
@@ -48,6 +48,9 @@ builder.Services.AddSession(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("Event_TreeConnection");
 builder.Services.AddDbContext<Event_TreeContext>(options => options.UseSqlServer(connectionString));
+
+// Đăng ký EmailNotificationService
+builder.Services.AddHostedService<EmailNotificationService>();
 
 var app = builder.Build();
 
@@ -102,15 +105,16 @@ app.UseEndpoints(endpoints =>
         name: "lien-he",
         pattern: "lien-he",
         defaults: new { controller = "Contact", action = "Index" });
-  
-    name: "su-kien-ca-nhan",
-    pattern: "su-kien-ca-nhan",
-    defaults: new { controller = "PersonalEvent", action = "Index" });
 
     endpoints.MapControllerRoute(
-    name: "quan_ly_su-kien-ca-nhan",
-    pattern: "quan_ly_su-kien-ca-nhan",
-    defaults: new { controller = "PersonalEventManagement", action = "Index" });
+        name: "su-kien-ca-nhan",
+        pattern: "su-kien-ca-nhan",
+        defaults: new { controller = "PersonalEvent", action = "Index" });
+
+    endpoints.MapControllerRoute(
+        name: "quan_ly_su-kien-ca-nhan",
+        pattern: "quan_ly_su-kien-ca-nhan",
+        defaults: new { controller = "PersonalEventManagement", action = "Index" });
 
     endpoints.MapControllerRoute(
         name: "ql_su_kien",

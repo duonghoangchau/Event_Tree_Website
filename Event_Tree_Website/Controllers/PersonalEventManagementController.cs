@@ -1,9 +1,13 @@
 ﻿
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Globalization;
+using System.Net.Mail;
 using System.Text;
 using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +17,13 @@ namespace Event_Tree_Website.Controllers
     {
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IConfiguration _configuration;
 
-
-        public PersonalEventManagementController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
+        public PersonalEventManagementController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
         {
             _context = context;
             _hostingEnvironment = hostingEnvironment;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index(int page = 1)
@@ -47,7 +52,7 @@ namespace Event_Tree_Website.Controllers
             var viewModel = new PersonalEventManagementViewModel
             {
                 Menus = menus,
-				Pers = pers,
+                Pers = pers,
                 TotalPages = totalPages,
                 CurrentPage = page,
             };
@@ -56,10 +61,10 @@ namespace Event_Tree_Website.Controllers
 
             return View(viewModel);
         }
-		public async Task<IActionResult> _MenuPartial()
-		{
-			return PartialView();
-		}
+        public async Task<IActionResult> _MenuPartial()
+        {
+            return PartialView();
+        }
         private void showHideDropdownList()
         {
             var hideOptions = new List<SelectListItem>
@@ -257,7 +262,7 @@ namespace Event_Tree_Website.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,  PersonalEvent personals)
+        public async Task<IActionResult> Edit(int id, PersonalEvent personals)
         {
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             var personal1 = await _context.PersonalEvents.FirstOrDefaultAsync(m => m.Id == id);
@@ -277,7 +282,7 @@ namespace Event_Tree_Website.Controllers
             };
             if (id != viewModel.Personals.Id)
             {
-               
+
                 return NotFound();
             }
 
@@ -285,7 +290,7 @@ namespace Event_Tree_Website.Controllers
             {
                 try
                 {
-                  
+
 
                     var existingPersonalEvent = await _context.PersonalEvents.FindAsync(id);
 
@@ -295,11 +300,11 @@ namespace Event_Tree_Website.Controllers
                     }
 
                     // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
-  
+
                     existingPersonalEvent.Hide = personals.Hide;
                     existingPersonalEvent.UpdatedAt = DateTime.Now;
 
-  
+
 
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
@@ -325,6 +330,84 @@ namespace Event_Tree_Website.Controllers
 
             return View(viewModel);
         }
+        public async Task<IActionResult> Gmail()
+        {
 
+            // Lấy danh sách menu không bị ẩn
+            var menus = await _context.Menus
+                                      .Where(m => m.Hide == 0)
+                                      .OrderBy(m => m.MenuOrder)
+                                      .ToListAsync();
+            var viewModel = new PersonalEventManagementViewModel
+            {
+                Menus = menus
+            };
+
+            // Trả về view với PersonalEventViewModel
+
+            return View(viewModel);
+        }
+        [HttpGet]
+        public async Task<IActionResult> SendEmailNotification()
+        {
+            try
+            {
+                // Lấy danh sách các sự kiện cá nhân sắp diễn ra trong 7 ngày tới
+                var upcomingEvents = await _context.PersonalEvents
+                    .Where(e => e.DateTime >= DateTime.Today && e.DateTime <= DateTime.Today.AddDays(7))
+                    .ToListAsync();
+
+                // Lặp qua từng sự kiện và gửi email thông báo
+                foreach (var personalEvent in upcomingEvents)
+                {
+                    // Lấy thông tin người dùng từ Id_user trong personalEvent
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == personalEvent.IdUser);
+
+                    // Gửi email thông báo cho người dùng
+                    if (user != null && !string.IsNullOrEmpty(user.Email))
+                    {
+                        string subject = "Thông báo sự kiện sắp diễn ra";
+                        string body = $"Sự kiện '{personalEvent.Name}' sẽ diễn ra vào ngày {personalEvent.DateTime.ToShortDateString()}.";
+
+                        // Gửi email
+                        SendEmail(user.Email, subject, body);
+                    }
+                }
+
+                return Json(new { success = true, message = "Emails đã được gửi thành công." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi gửi email: " + ex.Message });
+            }
+        }
+
+        private void SendEmail(string toEmail, string subject, string body)
+        {
+            // Đọc cấu hình email từ tệp appsettings.json
+            var fromEmail = _configuration["EmailSettings:FromEmail"];
+            var emailPassword = _configuration["EmailSettings:EmailPassword"];
+            var smtpHost = _configuration["EmailSettings:SmtpHost"];
+            var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]);
+
+            // Tạo đối tượng MailMessage
+            MailMessage mail = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            // Tạo đối tượng SmtpClient để gửi email
+            SmtpClient smtpClient = new SmtpClient(smtpHost, smtpPort)
+            {
+                UseDefaultCredentials = false,
+                Credentials = new System.Net.NetworkCredential(fromEmail, emailPassword),
+                EnableSsl = true // Sử dụng SSL để bảo vệ email
+            };
+
+            // Gửi email
+            smtpClient.Send(mail);
+        }
     }
 }

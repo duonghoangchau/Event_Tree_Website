@@ -21,17 +21,28 @@ namespace Event_Tree_Website.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public async Task<IActionResult> Index (int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            // Đếm tổng số sự kiện có Status = 1
-            var totalItems = await _context.PersonalEvents.CountAsync();
+            // Lấy id của người dùng hiện tại
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Nếu không có người dùng đăng nhập, chuyển hướng đến trang đăng nhập
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Đếm tổng số sự kiện có Status = 1 và id_user = id của người dùng hiện tại
+            var totalItems = await _context.PersonalEvents
+                                            .Where(pe => pe.IdUser.ToString() == userId)
+                                            .CountAsync();
 
             // Tính tổng số trang
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            // Lấy danh sách sự kiện có Status = 1 cho trang hiện tại
+            // Lấy danh sách sự kiện có Status = 1 và id_user = id của người dùng hiện tại cho trang hiện tại
             var pers = await _context.PersonalEvents
+                                     .Where(pe => pe.IdUser.ToString() == userId)
                                      .OrderByDescending(m => m.DateTime)
                                      .Skip((page - 1) * pageSize)
                                      .Take(pageSize)

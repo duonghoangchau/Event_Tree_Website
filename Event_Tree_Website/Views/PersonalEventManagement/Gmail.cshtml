@@ -1,0 +1,27 @@
+﻿@model Event_Tree_Website.ViewModels.PersonalEventManagementViewModel
+
+<!-- Thêm button vào giao diện -->
+<button id="sendEmailButton" class="btn btn-primary">Gửi Email Thông Báo</button>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#sendEmailButton').click(function () {
+                console.log("Button clicked. Sending request...");
+                // Gửi yêu cầu đến action method để kiểm tra và gửi email
+                $.get('@Url.Action("SendEmailNotification", "PersonalEventManagement")', function (data) {
+                    console.log("Request completed. Data received: ", data);
+                    // Hiển thị thông báo thành công hoặc xử lý lỗi nếu cần
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                }).fail(function () {
+                    console.error("Request failed.");
+                    alert("Đã xảy ra lỗi khi gửi yêu cầu.");
+                });
+            });
+        });
+    </script>
+}
