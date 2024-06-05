@@ -61,13 +61,16 @@
                             <li><a asp-controller="EventManagement" asp-action="Index">Quản Lý sự kiện</a></li>
                             <li><a asp-controller="PersonalEventManagement" asp-action="Index">Quản Lý SK người dùng</a></li>
                             <li><a asp-controller="Category" asp-action="Index">Quản lý danh mục</a></li>
+                            <li><a asp-controller="PersonalEventManagement" asp-action="Gmail">Gửi thông báo sự kiện</a></li>
                         }
                         @if (User.IsInRole("2"))
                         {
                             <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
                             <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý sự kiện</a></li>
+                            <li><a asp-controller="PersonalEventManagement" asp-action="Index">Quản Lý SK người dùng</a></li>
                             <li><a asp-controller="Catologies" asp-action="Index">Quản lý danh mục</a></li>
                             <li><a asp-controller="AccountManagement" asp-action="Index">Quản lý tài khoản</a></li>
+                            <li><a asp-controller="PersonalEventManagement" asp-action="Gmail">Gửi thông báo sự kiện</a></li>
                         }
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">
