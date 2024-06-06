@@ -16,7 +16,7 @@ namespace Event_Tree_Website.Controllers
 		}
 		public async Task<IActionResult> Index(int page = 1)
 		{
-			const int pageSize = 10;
+			const int pageSize = 15;
 			var totalItems = await _context.Events.Where(m => m.Hide == 0).CountAsync(); // Tổng số sản phẩm
 
 			var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize); // Tính tổng số trang

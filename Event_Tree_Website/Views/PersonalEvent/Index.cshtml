@@ -1,6 +1,6 @@
 ﻿@model Event_Tree_Website.ViewModels.PersonalEventViewModel
 
-<div class="body" style="margin-top: 50px;">
+<div class="bodyyy" style="margin-top: 50px; padding: 0.5cm;">
     <div class="body__mainTitle">
         <h2>QUẢN LÝ SỰ KIỆN CÁ NHÂN</h2>
     </div>
@@ -33,7 +33,6 @@
                     <th>hình ảnh</th>
                     <th>mô tả</th>
                     <th>ngày tạo</th>
-                    <th>trạng thái</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -58,11 +57,9 @@
                             @Html.DisplayFor(modelItem => item.CreatedAt)
                         </td>
                         <td>
-                            @(item.Hide == 0 ? "Hiển thị" : "Ẩn")
-                        </td>
-                        <td>
                             <a asp-action="Details" asp-route-id="@item.Id" class="text-primary f2"><i class="fa-solid fa-eye"></i></a>
                             <a asp-action="Edit" asp-route-id="@item.Id" class="text-primary f2"><i class="fas fa-edit"></i></a>
+                            <a href="#" class="text-danger f2 delete-event" data-id="@item.Id" data-toggle="modal" data-target="#confirmDeleteModal"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                 }
@@ -98,4 +95,36 @@
             }
         </ul>
     </div>
+
+   
 </div>
+
+
+@section scripts {
+    <script>
+        $(function () {
+            $('.delete-event').on('click', function () {
+                var eventId = $(this).data('id');
+
+                // Gửi yêu cầu xóa sự kiện bằng Ajax
+                $.ajax({
+                    url: '@Url.Action("Delete", "PersonalEvent")',
+                    type: 'POST',
+                    data: { id: eventId },
+                    success: function (response) {
+                        if (response.success) {
+                            // Nếu xóa thành công, chuyển hướng đến trang Index
+                            window.location.href = '/PersonalEvent/Index';
+                        }
+                    },
+
+                    error: function () {
+                        // Nếu xóa không thành công, không cần xử lý gì
+                    }
+                });
+            });
+
+
+        });
+    </script>
+}

@@ -1,35 +1,38 @@
 ﻿@model Event_Tree_Website.ViewModels.CategoryViewModel
-<div class="body fix-width scroll-inner" style="margin-top: 50px;">
-<h4>THÊM DANH MỤC MỚI</h4>
-<hr />
-<div class="row">
-    <div class="col-md-10">
-        <form asp-action="Create" asp-controller="Category" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Category.Name" class="control-label"></label>
-                    <input asp-for="Category.Name" class="form-control" required />
-                <span asp-validation-for="Category.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category.Order" class="control-label"></label>
-                    <input asp-for="Category.Order" class="form-control" required />
-                <span asp-validation-for="Category.Order" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category.Link" class="control-label"></label>
-                    <input asp-for="Category.Link" class="form-control" required />
-                <span asp-validation-for="Category.Link" class="text-danger"></span>
-            </div>
+<div class="bodyYY fix-width scroll-inner" style="margin-top: 50px; padding: 0.5cm;">
+	<div class="body__mainTitle">
+		<h2>TẠO DANH MỤC MỚI</h2>
+	</div>
+	<hr />
+	<div class="row">
+		<div class="col-md-12">
+			<form asp-action="Create" asp-controller="Category" method="post" enctype="multipart/form-data">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-                </div>
-        </form>
-    </div>
-</div>
+				<div class="form-group">
+					<label asp-for="Category.Name" class="control-label"></label>
+					<input asp-for="Category.Name" class="form-control" required />
+					<span asp-validation-for="Category.Name" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Category.Order" class="control-label"></label>
+					<input asp-for="Category.Order" class="form-control" required />
+					<span asp-validation-for="Category.Order" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Category.Link" class="control-label"></label>
+					<input asp-for="Category.Link" class="form-control" required />
+					<span asp-validation-for="Category.Link" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-primary" />
+					<a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+				</div>
+			</form>
+		</div>
+	</div>
 
 
 

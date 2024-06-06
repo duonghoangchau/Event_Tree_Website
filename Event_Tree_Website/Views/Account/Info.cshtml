@@ -1,60 +1,50 @@
 ﻿@model Event_Tree_Website.ViewModels.UserViewModel 
 
 
-<div class="body" style="margin-top: 50px;">
+<div class="bodyyy" style="margin-top: 50px; padding: 0.5cm;">
     <div class="body__mainTitle">
-        <h2>Thông tin tài khoản</h2>
+        <h2>THÔNG TIN TÀI KHOẢN</h2>
     </div>
     <form asp-action="EditUser" method="post">
         <div class="row in-1">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>Tên đăng nhập:</label>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <input type="text" class="form-control" asp-for="Register.Username" readonly />
             </div>
         </div>
 
         <div class="row in-2">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>Họ và tên:</label>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <input type="text" class="form-control" asp-for="Register.Fullname" readonly />
             </div>
         </div>
 
         <div class="row in-3">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>Email:</label>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <input type="text" class="form-control" asp-for="Register.Email" readonly />
             </div>
         </div>
 
         <div class="row in-4">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <label>Ngày sinh:</label>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <input type="text" class="form-control" asp-for="Register.Birthday" readonly />
             </div>
         </div>
-
-@*         <div class="row in-5">
-        <div class="col-md-6">
-        <label>Số điện thoại:</label>
-        </div>
-
-        <div class="col-md-6">
-        <input type="text" class="form-control" asp-for="Register.Phone" readonly />
-        </div>
-        </div> *@
 
         <center style="margin-top: 30px;">
             <a asp-action="EditInfo" class="btn btn-primary">Chỉnh sửa thông tin</a>

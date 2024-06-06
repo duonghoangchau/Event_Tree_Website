@@ -1,70 +1,65 @@
 ﻿@model Event_Tree_Website.ViewModels.EventViewModel
 
-<div class="body" style="padding-top: 30px; margin-top: 50px;">
+<div class="bodyyy" style="padding-top: 30px; margin-top: 50px; padding: 0.5cm;">
+    <div class="body__mainTitle d-flex justify-content-center align-items-center" style="text-align: center;">
+        <h2>CHI TIẾT SỰ KIỆN</h2>
+    </div>
+    @foreach (var item in Model.Eves)
+    {
+        <div class="row">
+            <a class="buy_continute mt-4" asp-controller="Event" asp-action="Index"><i class="fa fa-arrow-circle-left"></i> Quay lại danh sách</a>
+        </div>
 
-	@foreach (var item in Model.Eves)
-	{
-		<a class="buy_continute mt-4" asp-controller="Event" asp-action="Index"><i class="fa fa-arrow-circle-left"></i> Trở lại trang sự kiện</a>
+        @if (TempData["slError"] != null)
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                @TempData["slError"]
+            </div>
+        }
 
-		@if (@TempData["slError"] != null)
-		{
-			<div class="alert alert-danger mt-3" role="alert">
-				@TempData["slError"]
-			</div>
-		}
+        @if (TempData["addSuccess"] != null)
+        {
+            <div class="alert alert-success mt-3" role="alert">
+                @TempData["addSuccess"]
+            </div>
+        }
 
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <img id="mainImage" src="~/images/@item.ImageCode" alt="Main Image" class="img-responsive main-image mx-auto d-block">
+            </div>
+        </div>
 
-		@if (@TempData["addSuccess"] != null)
-		{
-			<div class="alert alert-success mt-3" role="alert">
-				@TempData["addSuccess"]
-			</div>
-		}
-		<div class="product__details row">
-			<div class="row">
-				<div class="row">
-					<div class="col-md-12 text-center">
-						<img id="mainImage" src="~/images/@item.ImageCode" alt="Main Image" class="img-responsive main-image mx-auto d-block">
-					</div>
-				</div>
-			</div>
-		
-				<div class="row">
-					<h2>@item.Name</h2>
-					<div class="body__mainTitle d-flex justify-content-between">
-						<h2>MÔ TẢ SỰ KIỆN </h2>
-					</div>
-					<article>
-						@Html.Raw(item.Description)
-					</article>
-					<hr />
+        <div class="row">
+            <h2>@item.Name</h2>
+        </div>
+        <hr />
+        <div class="row">
+            <P>MÔ TẢ SỰ KIỆN  :</P>
+            <article>
+                @Html.Raw(item.Description)
+            </article>
+        </div>
+        <hr />
 
-				</div>
-		</div>
+        <div class="row">
+                <P> THÔNG TIN CHI TIẾT SỰ KIỆN  :</P>
+            <article>
+                @Html.Raw(item.Detail)
+            </article>
+        </div>
 
-		<div class="body__mainTitle d-flex justify-content-between">
-			<h2>THÔNG TIN CHI TIẾT SỰ KIỆN </h2>
+    }
 
-		</div>
-		<article>
-			@Html.Raw(item.Detail)
-		</article>
-
-		<hr />
-
-
-
-	}
 </div>
+
 @section scripts {
-	<script>
-		function changeImage(img) {
-			var mainImage = document.getElementById('mainImage');
-			var tempSrc = mainImage.src;
-			mainImage.src = img.src;
-			img.src = tempSrc;
-		}
-	</script>
-
-
+    <script>
+        function changeImage(img) {
+            var mainImage = document.getElementById('mainImage');
+            var tempSrc = mainImage.src;
+            mainImage.src = img.src;
+            img.src = tempSrc;
+        }
+    </script>
 }
