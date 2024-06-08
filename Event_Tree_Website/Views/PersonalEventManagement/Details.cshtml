@@ -32,7 +32,10 @@
 				<div class="form-group">
 					<label class="control-label">HÌNH ẢNH</label>
 					<div>
-						<img src="~/images/@Model.Personals.ImageCode" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+						@foreach (var image in Model.Images)
+                {
+                    <img src="@image.Url" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                }
 					</div>
 				</div>
 

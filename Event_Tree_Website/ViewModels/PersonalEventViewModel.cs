@@ -14,5 +14,6 @@ namespace Event_Tree_Website.ViewModels
 
         public PersonalEvent Personals { get; internal set; }
         public List<SelectListItem> HideOptions { get; internal set; }
+        public List<Image> Images { get; internal set; }
     }
 }

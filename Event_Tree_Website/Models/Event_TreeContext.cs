@@ -61,7 +61,6 @@ namespace Event_Tree_Website.Models
 
                 entity.Property(e => e.Order).HasColumnName("order");
             });
-
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.ToTable("events");

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Imgur.API" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.31" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.31" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>

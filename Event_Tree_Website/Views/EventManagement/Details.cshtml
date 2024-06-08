@@ -1,5 +1,4 @@
 ﻿@model Event_Tree_Website.ViewModels.EventManagementViewModel
-
 <div class="bodyyy fix-width scroll-inner" style="margin-top: 50px; padding: 0.5cm;">
     <div class="body__mainTitle d-flex justify-content-between align-items-center">
         <h2>CHI TIẾT SỰ KIỆN</h2>
@@ -31,10 +30,12 @@
                 <div class="form-group">
                     <label class="control-label">HÌNH ẢNH</label>
                     <div>
-                        <img src="~/images/@Model.Events.ImageCode" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                        @foreach (var image in Model.Images)
+                {
+                    <img src="@image.Url" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                }
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="control-label">TRẠNG THÁI</label>
                     <input class="form-control" value="@(Model.Events.Hide == 0 ? "Hiển thị" : "Ẩn")" readonly />

@@ -13,6 +13,7 @@ namespace Event_Tree_Website.ViewModels
         public int TotalPages { get; internal set; }
         public int CurrentPage { get; internal set; }
         public List<SelectListItem> HideOptions { get; internal set; }
-        
+
+        public List<Image> Images { get; internal set; }
     }
 }

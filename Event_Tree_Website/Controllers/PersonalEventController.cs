@@ -3,9 +3,14 @@ using System.Globalization;
 using System.Text;
 using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
+using Imgur.API.Authentication;
+using Imgur.API.Endpoints;
+using Imgur.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Image = Event_Tree_Website.Models.Image;
 
 namespace Event_Tree_Website.Controllers
 {
@@ -53,7 +58,18 @@ namespace Event_Tree_Website.Controllers
                                       .Where(m => m.Hide == 0)
                                       .OrderBy(m => m.MenuOrder)
                                       .ToListAsync();
+            var imageCodes = pers.Select(c => c.ImageCode).Distinct().ToList();
 
+            var images = _context.Images.Where(i => imageCodes.Contains(i.ImageCode)).ToList();
+
+            foreach (var eve in pers)
+            {
+                var image = images.FirstOrDefault(i => i.ImageCode == eve.ImageCode);
+                if (image != null)
+                {
+                    eve.ImageCode = image.Url;
+                }
+            }
             // Tạo ViewModel
             var viewModel = new PersonalEventViewModel
             {
@@ -106,18 +122,50 @@ namespace Event_Tree_Website.Controllers
                     {
                         if (formFile.Length > 0)
                         {
-                            var fileName = Path.GetFileName(formFile.FileName);
-                            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
-                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf"); // Thay thế YOUR_CLIENT_ID và YOUR_CLIENT_SECRET bằng thông tin xác thực của bạn
+                            var httpClient = new HttpClient();
+
+                            var oAuth2Endpoint = new OAuth2Endpoint(apiClient, httpClient);
+                            var authUrl = oAuth2Endpoint.GetAuthorizationUrl();
+
+                            var token = new OAuth2Token
                             {
-                                await formFile.CopyToAsync(stream);
+                                AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb", // Thay thế YOUR_ACCESS_TOKEN bằng Access Token của bạn
+                                RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1", // Thay thế YOUR_REFRESH_TOKEN bằng Refresh Token của bạn
+                                AccountId = 180393165,
+                                AccountUsername = "lvxadoniss1",
+                                ExpiresIn = 315360000,
+                                TokenType = "bearer"
+                            };
+
+                            apiClient.SetOAuth2Token(token);
+                            var imageEndpoint = new ImageEndpoint(apiClient, httpClient);
+                            var code = "IMG_" + GenerateRandomString(8);
+
+                            foreach (var file in files)
+                            {
+                                if (file != null && file.Length > 0)
+                                {
+                                    using var fileStream = file.OpenReadStream();
+                                    var imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
+                                    var imageUrl = imageUpload.Link;
+
+                                    var newImage = new Image
+                                    {
+                                        Url = imageUrl,
+                                        Type = 2,
+                                        ImageCode = code,
+                                    };
+                                    personals.ImageCode = code;
+                                    _context.Images.Add(newImage);
+                                    await _context.SaveChangesAsync();
+                                }
                             }
-                            filePaths.Add(fileName);
                         }
-                    }
+                    }/*
                     // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
                     if (filePaths.Count >= 1)
-                        personals.ImageCode = filePaths[0];
+                        personals.ImageCode = filePaths[0];*/
                 }
 
                 // Tạo một đối tượng AdminViewModel từ Product
@@ -136,7 +184,18 @@ namespace Event_Tree_Website.Controllers
 
            
         }
-
+        public static string GenerateRandomString(int length = 10)
+        {
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder builder = new StringBuilder();
+            Random random = new Random();
+            for (int i = 0; i < length; i++)
+            {
+                int index = random.Next(chars.Length);
+                builder.Append(chars[index]);
+            }
+            return builder.ToString();
+        }
 
         [HttpGet]
         public async Task<IActionResult> Search(int id)
@@ -152,6 +211,7 @@ namespace Event_Tree_Website.Controllers
             var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
+                Images = _context.Images.Where(i => i.ImageCode.Equals(per.ImageCode)).ToList(),
                 Personals = per
             };
 
@@ -175,7 +235,17 @@ namespace Event_Tree_Website.Controllers
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.DateTime)
                 .ToListAsync();
+            var imageCodes = pers.Select(c => c.ImageCode).Distinct().ToList();
+            var images = _context.Images.Where(i => imageCodes.Contains(i.ImageCode)).ToList();
 
+            foreach (var per in pers)
+            {
+                var image = images.FirstOrDefault(i => i.ImageCode == per.ImageCode);
+                if (image != null)
+                {
+                    per.ImageCode = image.Url;
+                }
+            }
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
             var viewModel = new PersonalEventViewModel
@@ -227,9 +297,11 @@ namespace Event_Tree_Website.Controllers
             {
                 return NotFound();
             }
+            var images = _context.Images.Where(i => i.ImageCode.Equals(personals.ImageCode)).ToList();
             var viewModel = new PersonalEventViewModel
             {
                 Personals = personals,
+                Images = images,
                 Menus = menus
             };
             return View(viewModel);
@@ -281,7 +353,8 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Personals = sukien,
-                //HideOptions = hideOptions
+                Images = _context.Images.Where(i => qi.ImageCode.Equals(sukien.ImageCode)).ToList(),
+                HideOptions = hideOptions
             };
 
             return View(viewModel);
@@ -303,8 +376,8 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Personals = personal1,
-                //HideOptions = hideOptions
-
+                Images = _context.Images.Where(i => i.ImageCode.Equals(personal1.ImageCode)).ToList(),
+                HideOptions = hideOptions
             };
             if (id != viewModel.Personals.Id)
             {
@@ -322,21 +395,53 @@ namespace Event_Tree_Website.Controllers
                         {
                             if (formFile.Length > 0)
                             {
-                                var fileName = Path.GetFileName(formFile.FileName);
-                                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
-                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf"); // Thay thế YOUR_CLIENT_ID và YOUR_CLIENT_SECRET bằng thông tin xác thực của bạn
+                                var httpClient = new HttpClient();
+
+                                var oAuth2Endpoint = new OAuth2Endpoint(apiClient, httpClient);
+                                var authUrl = oAuth2Endpoint.GetAuthorizationUrl();
+
+                                var token = new OAuth2Token
                                 {
-                                    await formFile.CopyToAsync(stream);
+                                    AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb", // Thay thế YOUR_ACCESS_TOKEN bằng Access Token của bạn
+                                    RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1", // Thay thế YOUR_REFRESH_TOKEN bằng Refresh Token của bạn
+                                    AccountId = 180393165,
+                                    AccountUsername = "lvxadoniss1",
+                                    ExpiresIn = 315360000,
+                                    TokenType = "bearer"
+                                };
+
+                                apiClient.SetOAuth2Token(token);
+                                var imageEndpoint = new ImageEndpoint(apiClient, httpClient);
+                                var code = "IMG_" + GenerateRandomString(8);
+
+                                foreach (var file in files)
+                                {
+                                    if (file != null && file.Length > 0)
+                                    {
+                                        using var fileStream = file.OpenReadStream();
+                                        var imageUpload = await imageEndpoint.UploadImageAsync(fileStream);
+                                        var imageUrl = imageUpload.Link;
+
+                                        var newImage = new Image
+                                        {
+                                            Url = imageUrl,
+                                            Type = 2,
+                                            ImageCode = code,
+                                        };
+                                        personals.ImageCode = code;
+                                        _context.Images.Add(newImage);
+                                        await _context.SaveChangesAsync();
+                                    }
                                 }
-                                filePaths.Add(fileName);
                             }
-                        }
+                        }/*
                         // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
                         if (filePaths.Count >= 1)
                         {
                             // Không cần thêm tiền tố "images\" vào đường dẫn
                             personals.ImageCode = filePaths[0];
-                        }
+                        }*/
 
                     }
 
@@ -383,7 +488,6 @@ namespace Event_Tree_Website.Controllers
             }
 
             // Tạo view model và truyền dữ liệu
-
             return View(viewModel);
         }
 

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Event_Tree_Website.Controllers
 {
@@ -47,7 +48,18 @@ namespace Event_Tree_Website.Controllers
                                       .Where(m => m.Hide == 0)
                                       .OrderBy(m => m.MenuOrder)
                                       .ToListAsync();
+            var imageCodes = pers.Select(c => c.ImageCode).Distinct().ToList();
 
+            var images = _context.Images.Where(i => imageCodes.Contains(i.ImageCode)).ToList();
+
+            foreach (var eve in pers)
+            {
+                var image = images.FirstOrDefault(i => i.ImageCode == eve.ImageCode);
+                if (image != null)
+                {
+                    eve.ImageCode = image.Url;
+                }
+            }
             // Tạo ViewModel
             var viewModel = new PersonalEventManagementViewModel
             {
@@ -76,58 +88,6 @@ namespace Event_Tree_Website.Controllers
             ViewBag.HideOptions = hideOptions;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Create()
-        //{
-        //    var menus = await _context.Menus.Where(m => m.Hide == 0).ToListAsync();
-        //    return View(new PersonalEventManagementViewModel { Menus = menus });
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> Create(PersonalEvent personals, List<IFormFile> files)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        personals.Hide = 0;
-        //        personals.CreatedAt = DateTime.Now;
-        //        personals.UpdatedAt = DateTime.Now;
-
-        //        showHideDropdownList();
-        //        if (files != null && files.Count > 0)
-        //        {
-        //            var filePaths = new List<string>();
-        //            foreach (var formFile in files)
-        //            {
-        //                if (formFile.Length > 0)
-        //                {
-        //                    var fileName = Path.GetFileName(formFile.FileName);
-        //                    var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
-        //                    using (var stream = new FileStream(filePath, FileMode.Create))
-        //                    {
-        //                        await formFile.CopyToAsync(stream);
-        //                    }
-        //                    filePaths.Add(fileName);
-        //                }
-        //            }
-        //            // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
-        //            if (filePaths.Count >= 1)
-        //                personals.ImageCode = filePaths[0];
-        //        }
-
-        //        // Tạo một đối tượng AdminViewModel từ Product
-        //        var viewModel = new PersonalEventManagementViewModel
-        //        {
-        //            Personals = personals // gán product vào AdminViewModel
-        //        };
-        //        _context.Add(personals);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-
-        //    //showDropList();
-        //    return View(personals);
-        //}
-
 
         [HttpGet]
         public async Task<IActionResult> Search(int id)
@@ -143,6 +103,7 @@ namespace Event_Tree_Website.Controllers
             var viewModel = new PersonalEventManagementViewModel
             {
                 Menus = menus,
+                Images = _context.Images.Where(i => i.ImageCode.Equals(per.ImageCode)).ToList(),
                 Personals = per
             };
 
@@ -166,6 +127,18 @@ namespace Event_Tree_Website.Controllers
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.DateTime)
                 .ToListAsync();
+            var imageCodes = pers.Select(c => c.ImageCode).Distinct().ToList();
+
+            var images = _context.Images.Where(i => imageCodes.Contains(i.ImageCode)).ToList();
+
+            foreach (var eve in pers)
+            {
+                var image = images.FirstOrDefault(i => i.ImageCode == eve.ImageCode);
+                if (image != null)
+                {
+                    eve.ImageCode = image.Url;
+                }
+            }
 
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
@@ -221,6 +194,7 @@ namespace Event_Tree_Website.Controllers
             var viewModel = new PersonalEventManagementViewModel
             {
                 Personals = personals,
+                Images = _context.Images.Where(i => i.ImageCode.Equals(personals.ImageCode)).ToList(),
                 Menus = menus
             };
             return View(viewModel);
@@ -293,11 +267,11 @@ namespace Event_Tree_Website.Controllers
 
 
                     var existingPersonalEvent = await _context.PersonalEvents.FindAsync(id);
-
                     if (existingPersonalEvent == null)
                     {
                         return NotFound();
                     }
+
 
                     // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
 

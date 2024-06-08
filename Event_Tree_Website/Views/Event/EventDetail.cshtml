@@ -9,7 +9,6 @@
         <div class="row">
             <a class="buy_continute mt-4" asp-controller="Event" asp-action="Index"><i class="fa fa-arrow-circle-left"></i> Quay lại danh sách</a>
         </div>
-
         @if (TempData["slError"] != null)
         {
             <div class="alert alert-danger mt-3" role="alert">
@@ -29,7 +28,6 @@
                 <img id="mainImage" src="~/images/@item.ImageCode" alt="Main Image" class="img-responsive main-image mx-auto d-block">
             </div>
         </div>
-
         <div class="row">
             <h2>@item.Name</h2>
         </div>

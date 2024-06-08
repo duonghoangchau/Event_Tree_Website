@@ -21,7 +21,6 @@ namespace Event_Tree_Website.Models
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool? Status { get; set; }
-
         public virtual ICollection<PersonalEvent> PersonalEvents { get; set; }
     }
 }
