@@ -47,7 +47,7 @@ namespace Event_Tree_Website.Controllers
 
             // Lấy danh sách sự kiện có Status = 1 và id_user = id của người dùng hiện tại cho trang hiện tại
             var pers = await _context.PersonalEvents
-                                     .Where(pe => pe.IdUser.ToString() == userId)
+                                    .Where(pe => pe.IdUser.ToString() == userId && pe.Hide == 0)
                                      .OrderByDescending(m => m.DateTime)
                                      .Skip((page - 1) * pageSize)
                                      .Take(pageSize)
@@ -86,17 +86,6 @@ namespace Event_Tree_Website.Controllers
             return PartialView();
         }
 
-        private void showHideDropdownList()
-        {
-            var hideOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Hiển thị", Value = "0" },
-                new SelectListItem { Text = "Ẩn", Value = "1" }
-            };
-
-            ViewBag.HideOptions = hideOptions;
-        }
-
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -109,11 +98,23 @@ namespace Event_Tree_Website.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Lấy id của người dùng hiện tại từ session
+                var userId = HttpContext.Session.GetString("UserId");
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // Nếu không có người dùng đăng nhập, chuyển hướng đến trang đăng nhập
+                    return RedirectToAction("Login", "Account");
+                }
+
+                // Gán id_user của người đăng nhập cho sự kiện mới
+                personals.IdUser = int.Parse(userId);
+
+                // Tiếp tục tạo sự kiện như bình thường
                 personals.Hide = 0;
                 personals.CreatedAt = DateTime.Now;
                 personals.UpdatedAt = DateTime.Now;
 
-                showHideDropdownList();
+                //showHideDropdownList();
                 if (files != null && files.Count > 0)
                 {
                     var filePaths = new List<string>();
@@ -179,6 +180,9 @@ namespace Event_Tree_Website.Controllers
 
             //showDropList();
             return View(personals);
+        
+
+           
         }
         public static string GenerateRandomString(int length = 10)
         {
@@ -309,6 +313,27 @@ namespace Event_Tree_Website.Controllers
             return _context.PersonalEvents.Any(e => e.Id == id);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var personalEvent = await _context.PersonalEvents.FindAsync(id);
+            if (personalEvent == null)
+            {
+                return NotFound();
+            }
+
+            // Cập nhật trạng thái "Hide" thành 1
+            personalEvent.Hide = 1;
+            _context.PersonalEvents.Update(personalEvent);
+            await _context.SaveChangesAsync();
+
+            // Trả về một JSON cho phía client
+            return Json(new { success = true });
+        }
+
+
+
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -322,15 +347,13 @@ namespace Event_Tree_Website.Controllers
                 return NotFound();
             }
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
-            var hideOptions = new List<SelectListItem>();
-            hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
-            hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
+
             // Tạo view model và truyền dữ liệu
             var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
                 Personals = sukien,
-                Images = _context.Images.Where(i => i.ImageCode.Equals(sukien.ImageCode)).ToList(),
+                Images = _context.Images.Where(i => qi.ImageCode.Equals(sukien.ImageCode)).ToList(),
                 HideOptions = hideOptions
             };
 
@@ -348,9 +371,7 @@ namespace Event_Tree_Website.Controllers
             {
                 return NotFound();
             }
-            var hideOptions = new List<SelectListItem>();
-            hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
-            hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
+
             var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
@@ -438,7 +459,7 @@ namespace Event_Tree_Website.Controllers
                     existingPersonalEvent.Detail = personals.Detail;
                     existingPersonalEvent.ImageCode = personals.ImageCode;
                     existingPersonalEvent.Link = personals.Link;
-                    existingPersonalEvent.Hide = personals.Hide;
+                    existingPersonalEvent.Hide = 0;
                     existingPersonalEvent.UpdatedAt = DateTime.Now;
 
                     if (!string.IsNullOrEmpty(personals.ImageCode))
@@ -469,5 +490,8 @@ namespace Event_Tree_Website.Controllers
             // Tạo view model và truyền dữ liệu
             return View(viewModel);
         }
+
+   
+
     }
 }

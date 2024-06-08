@@ -48,7 +48,6 @@ namespace Event_Tree_Website.Controllers
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize); // Tính tổng số trang
 
             var eves = await _context.Events.OrderByDescending(m => m.DateTime)
-                                                .Where(e => e.Status == "0")
                                                 .Skip((page - 1) * pageSize)
                                                 .Take(pageSize)
                                                 .ToListAsync(); // Lấy sự kiện cho trang hiện tại
@@ -112,7 +111,6 @@ namespace Event_Tree_Website.Controllers
             if (ModelState.IsValid)
             {
                 events.Hide = 0;
-                events.Status = "0";
                 events.CreatedAt = DateTime.Now;
                 events.UpdatedAt = DateTime.Now;
                 events.DeletedAt = DateTime.Now;
@@ -441,7 +439,6 @@ namespace Event_Tree_Website.Controllers
                     existingEvent.ImageCode = events.ImageCode;
                     existingEvent.Link = events.Link;
                     existingEvent.Hide = events.Hide;
-                    existingEvent.Status = events.Status;
                     existingEvent.UpdatedAt = DateTime.Now;
                     existingEvent.DeletedAt = DateTime.Now;
                     if (!string.IsNullOrEmpty(events.ImageCode))

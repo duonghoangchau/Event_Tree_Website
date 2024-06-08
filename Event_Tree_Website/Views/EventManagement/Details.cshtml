@@ -1,84 +1,66 @@
 ﻿@model Event_Tree_Website.ViewModels.EventManagementViewModel
-
-<div class="text-center" style="margin-top: 50px" ;>
-    <h2>Chi tiết sự kiện</h2>
-</div>
-<div class="body">
+<div class="bodyyy fix-width scroll-inner" style="margin-top: 50px; padding: 0.5cm;">
+    <div class="body__mainTitle d-flex justify-content-between align-items-center">
+        <h2>CHI TIẾT SỰ KIỆN</h2>
+    </div>
     <hr />
-    <dl class="dl-horizontal">
-        <dt class="col-sm-2">Tên Sự Kiện</dt>
-        <dd class="col-sm-10    ">
-            <div class="border p-1">
-                @Html.DisplayFor(model => model.Events.Name)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Thời Gian Sự Kiện</dt>
-        <dd class="col-sm-10    ">
-            <div class="border p-1">
-                @Html.DisplayFor(model => model.Events.DateTime)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Mô Tả Sự Kiện</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Events.Description)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Chi Tiết Sự Kiện</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Events.Detail)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Hình Ảnh Sự Kiện</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @foreach (var image in Model.Images)
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                <div class="form-group">
+                    <label class="control-label">TÊN SỰ KIỆN</label>
+                    <input class="form-control" value="@Model.Events.Name" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">THỜI GIAN SỰ KIỆN</label>
+                    <input class="form-control" value="@Model.Events.DateTime.ToString("g")" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">MÔ TẢ</label>
+                    <input class="form-control" value="@Model.Events.Description" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">CHI TIẾT</label>
+                    <input class="form-control" value="@Model.Events.Detail" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">HÌNH ẢNH</label>
+                    <div>
+                        @foreach (var image in Model.Images)
                 {
                     <img src="@image.Url" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
                 }
-            </div>
-        </dd>
-        <dt class="col-sm-2"><text>Tình Trạng</text></dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @{
-                    if (Model.Events.Hide == 0)
-                    {
-                        <text>Hiển thị</text>
-                    }
-                    else if (Model.Events.Hide == 1)
-                    {
-                        <text>Ẩn</text>
-                    }
-                }
-            </div>
-        </dd>
-        <dt class="col-sm-2">Danh Mục </dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Events.IdCategory)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Ngày Tạo Sự Kiện</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Events.CreatedAt)
-            </div>
-        </dd>
-        <dt class="col-sm-2">Ngày Sửa Sự Kiện</dt>
-        <dd class="col-sm-10">
-            <div class="border p-2">
-                @Html.DisplayFor(model => model.Events.UpdatedAt)
-            </div>
-        </dd>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">TRẠNG THÁI</label>
+                    <input class="form-control" value="@(Model.Events.Hide == 0 ? "Hiển thị" : "Ẩn")" readonly />
+                </div>
 
-    </dl>
-    <div>
-        <div class="col-sm-10" style="margin-bottom: 28px;">
-            <a asp-action="Edit" asp-route-id="@Model.Events.Id" class="btn btn-primary">Edit</a>
-            <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+                <div class="form-group">
+                    <label class="control-label">DANH MỤC</label>
+                    <input class="form-control" value="@Model.Events.IdCategory" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">NGÀY TẠO SỰ KIỆN</label>
+                    <input class="form-control" value="@(Model.Events.CreatedAt?.ToString("g") ?? "N/A")" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">NGÀY SỬA SỰ KIỆN</label>
+                    <input class="form-control" value="@(Model.Events.UpdatedAt?.ToString("g") ?? "N/A")" readonly />
+                </div>
+
+                <div class="form-group">
+                    <a asp-action="Edit" asp-route-id="@Model.Events.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại trang</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
