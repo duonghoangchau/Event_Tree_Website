@@ -17,9 +17,7 @@ namespace Event_Tree_Website.Models
         }
 
         public virtual DbSet<Category> Categories { get; set; } = null!;
-        public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Contribution> Contributions { get; set; } = null!;
-        public virtual DbSet<DetailEvent> DetailEvents { get; set; } = null!;
         public virtual DbSet<Event> Events { get; set; } = null!;
         public virtual DbSet<Image> Images { get; set; } = null!;
         public virtual DbSet<Menu> Menus { get; set; } = null!;
@@ -27,7 +25,6 @@ namespace Event_Tree_Website.Models
         public virtual DbSet<PersonalEvent> PersonalEvents { get; set; } = null!;
         public virtual DbSet<Premium> Premiums { get; set; } = null!;
         public virtual DbSet<Slider> Sliders { get; set; } = null!;
-        public virtual DbSet<Tree> Trees { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -67,45 +64,6 @@ namespace Event_Tree_Website.Models
                 entity.Property(e => e.Order).HasColumnName("order");
             });
 
-            modelBuilder.Entity<Comment>(entity =>
-            {
-                entity.ToTable("comments");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Active).HasColumnName("active");
-
-                entity.Property(e => e.CmtContent).HasColumnName("cmt_content");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
-
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("deleted_at");
-
-                entity.Property(e => e.EventId).HasColumnName("event_id");
-
-                entity.Property(e => e.Likes).HasColumnName("likes");
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Event)
-                    .WithMany(p => p.Comments)
-                    .HasForeignKey(d => d.EventId)
-                    .HasConstraintName("FK_comments_events");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Comments)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_comments_users");
-            });
-
             modelBuilder.Entity<Contribution>(entity =>
             {
                 entity.ToTable("contributions");
@@ -143,27 +101,6 @@ namespace Event_Tree_Website.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_contributions_users");
-            });
-
-            modelBuilder.Entity<DetailEvent>(entity =>
-            {
-                entity.ToTable("detail_event");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.EventId).HasColumnName("event_id");
-
-                entity.Property(e => e.TreeId).HasColumnName("tree_id");
-
-                entity.HasOne(d => d.Event)
-                    .WithMany(p => p.DetailEvents)
-                    .HasForeignKey(d => d.EventId)
-                    .HasConstraintName("FK_detail_event_events");
-
-                entity.HasOne(d => d.Tree)
-                    .WithMany(p => p.DetailEvents)
-                    .HasForeignKey(d => d.TreeId)
-                    .HasConstraintName("FK_detail_event_trees");
             });
 
             modelBuilder.Entity<Event>(entity =>
@@ -383,43 +320,6 @@ namespace Event_Tree_Website.Models
                 entity.Property(e => e.Title)
                     .HasMaxLength(50)
                     .HasColumnName("TITLE");
-            });
-
-            modelBuilder.Entity<Tree>(entity =>
-            {
-                entity.ToTable("trees");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Active).HasColumnName("active");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_at");
-
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("deleted_at");
-
-                entity.Property(e => e.ImageCode)
-                    .HasMaxLength(20)
-                    .HasColumnName("image_code");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .HasColumnName("name")
-                    .IsFixedLength();
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updated_at");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Trees)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_trees_users");
             });
 
             modelBuilder.Entity<User>(entity =>

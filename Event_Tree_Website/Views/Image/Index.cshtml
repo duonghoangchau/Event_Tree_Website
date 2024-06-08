@@ -1,0 +1,58 @@
+﻿@model Event_Tree_Website.ViewModels.ImageViewModel
+@{
+    ViewBag.Title = "Image Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="app-body">
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="card-title">Images</h5>
+        </div>
+        <div class="card-body">
+            <div class="row gx-3" id="imageContainer">
+                @foreach (var image in Model.Images)
+                {
+                    <div class="col-xl-4 col-sm-6 col-12 mb-3" id="image_@image.Id">
+                        <div class="card">
+                            <img src="@image.Url" class="card-img-top" alt="Image" />
+                            <div class="card-body">
+                                <button type="button" class="btn btn-danger delete-button" data-id="@image.Id">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div id="message"></div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.delete-button').click(function () {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '@Url.Action("Delete", "Image")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#image_' + id).remove();
+                        }
+                        $('#message').html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        var errorResponse = {
+                            status: textStatus,
+                            error: errorThrown,
+                            response: jqXHR.responseText
+                        };
+                        $('#message').html('<pre>' + JSON.stringify(errorResponse, null, 2) + '</pre>');
+                    }
+                });
+            });
+        });
+    </script>
+}

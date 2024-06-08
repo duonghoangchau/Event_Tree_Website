@@ -7,11 +7,9 @@ namespace Event_Tree_Website.Models
     {
         public User()
         {
-            Comments = new HashSet<Comment>();
             Contributions = new HashSet<Contribution>();
             Orders = new HashSet<Order>();
             PersonalEvents = new HashSet<PersonalEvent>();
-            Trees = new HashSet<Tree>();
         }
 
         public int Id { get; set; }
@@ -32,10 +30,8 @@ namespace Event_Tree_Website.Models
         public string? Avatar { get; set; }
 
         public virtual Premium? Premium { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Contribution> Contributions { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PersonalEvent> PersonalEvents { get; set; }
-        public virtual ICollection<Tree> Trees { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Event_Tree_Website.Controllers
         {
             _context = context;
         }
-       
+
         public async Task<IActionResult> Index()
         {
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
@@ -27,7 +27,18 @@ namespace Event_Tree_Website.Controllers
             List<Category> categories = _context.Categories.Where(x => x.Hide == 0 || x.Hide == null).ToList();
 
             List<Event> even = _context.Events.ToList();
+            var imageCodes = even.Select(c => c.ImageCode).Distinct().ToList();
 
+            var images = _context.Images.Where(i => imageCodes.Contains(i.ImageCode)).ToList();
+
+            foreach (var eve in even)
+            {
+                var image = images.FirstOrDefault(i => i.ImageCode == eve.ImageCode);
+                if (image != null)
+                {
+                    eve.ImageCode = image.Url;
+                }
+            }
             var viewModel = new HomeViewModel
             {
                 Menus = menus,

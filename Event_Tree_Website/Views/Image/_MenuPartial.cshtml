@@ -1,5 +1,5 @@
 ﻿@using System.Security.Claims;
-@model Event_Tree_Website.ViewModels.HomeViewModel
+@model Event_Tree_Website.ViewModels.ImageViewModel
 
 
 
@@ -67,7 +67,7 @@
                         @if (User.IsInRole("2"))
                         {
                             <li><a asp-controller="Account" asp-action="Info">Thông tin cá nhân</a></li>
-                            <li><a asp-controller="EventManagement" asp-action="Index">Quản Lý sự kiện</a></li>
+                            <li><a asp-controller="ProductManagement" asp-action="Index">Quản Lý sự kiện</a></li>
                             <li><a asp-controller="PersonalEventManagement" asp-action="Index">Quản Lý SK người dùng</a></li>
                             <li><a asp-controller="Catologies" asp-action="Index">Quản lý danh mục</a></li>
                             <li><a asp-controller="Image" asp-action="Index">Quản lý hình ảnh</a></li>
