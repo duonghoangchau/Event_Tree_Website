@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace Event_Tree_Website.Controllers
 {
@@ -158,6 +159,58 @@ namespace Event_Tree_Website.Controllers
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role.ToString()),
                 };
+
+                var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties { };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                HttpContext.Session.SetString("UserId", user.Id.ToString());
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FacebookLogin()
+        {
+            var redirectUrl = Url.Action("FacebookResponse", "Account", null, Request.Scheme);
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FacebookResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+                return RedirectToAction(nameof(Login));
+
+            var claims = authenticateResult.Principal.Identities.FirstOrDefault().Claims.Select(claim => new { claim.Type, claim.Value }).ToList();
+            var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
+
+            if (email != null)
+            {
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        Username = email,
+                        Fullname = name,
+                        Email = email,
+                        Role = 0,
+                        Status = true,
+                        Provide = 1,
+                        Password = BCrypt.Net.BCrypt.HashPassword("RandomPassword"), // Set a random password
+                    };
+                    db.Users.Add(user);
+                    await db.SaveChangesAsync();
+                }
+
+                var userClaims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+        };
 
                 var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties { };

@@ -13,14 +13,13 @@
                     <a asp-controller="Event" asp-action="EventDetail" asp-route-slug="@item.Link" asp-route-id="@item.Id">
                         <div class="product">
                             <div class="product__img">
-                                <img src="~/images/@item.ImageCode" class="img-rounded"
-                                     alt="@item.Name">
+                                <img src="@item.ImageCode" alt="@item.Name" width="90" height="90">
                             </div>
                             <div class="product__content">
                                 <div class="product__title">
                                     @item.Name
                                 </div>
-                
+
                             </div>
                             <p style="text-align: center;margin-top:20px">
                                 <a href="su-kien/@item.Link-@item.Id" class="btn btn-info" role="button"><i class="fa fa-rocket"></i> Chi tiết</a>

@@ -1,9 +1,11 @@
 ﻿using Event_Tree_Website.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,13 @@ builder.Services.AddAuthentication(options =>
     options.ClientId = googleAuthNSection["ClientId"];
     options.ClientSecret = googleAuthNSection["ClientSecret"];
     options.CallbackPath = "/signin-google";
+})
+.AddFacebook(facebookOptions =>
+{
+    facebookOptions.AppId = "1589403635192838";
+    facebookOptions.AppSecret = "22800fe6807d73c663ff15297aa75609";
+    facebookOptions.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
+    facebookOptions.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
 });
 
 builder.Services.AddAuthorization(options =>

@@ -33,7 +33,10 @@
         <dt class="col-sm-2">Hình Ảnh Sự Kiện</dt>
         <dd class="col-sm-10">
             <div class="border p-2">
-                <img src="~/images/@Model.Personals.ImageCode" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                @foreach (var image in Model.Images)
+                {
+                    <img src="@image.Url" alt="Hình ảnh" style="max-width: 100px; max-height: 100px;" />
+                }
             </div>
         </dd>
         <dt class="col-sm-2"><text>Tình Trạng</text></dt>

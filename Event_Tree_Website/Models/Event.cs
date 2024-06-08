@@ -5,11 +5,6 @@ namespace Event_Tree_Website.Models
 {
     public partial class Event
     {
-        public Event()
-        {
-            Comments = new HashSet<Comment>();
-            DetailEvents = new HashSet<DetailEvent>();
-        }
 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
@@ -26,7 +21,5 @@ namespace Event_Tree_Website.Models
         public DateTime? DeletedAt { get; set; }
 
         public virtual Category? IdCategoryNavigation { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<DetailEvent> DetailEvents { get; set; }
     }
 }
