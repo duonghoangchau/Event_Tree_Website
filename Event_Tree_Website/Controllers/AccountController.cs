@@ -30,6 +30,10 @@ namespace Event_Tree_Website.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             var viewModel = new UserViewModel
             {
@@ -225,7 +229,7 @@ namespace Event_Tree_Website.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
+        [Authorize]
         public async Task<IActionResult> Info()
         {
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
@@ -326,8 +330,9 @@ namespace Event_Tree_Website.Controllers
                 }
             }
         }
-
+        
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ChangePassword(UserViewModel model)
         {
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
@@ -383,19 +388,6 @@ namespace Event_Tree_Website.Controllers
                     ViewBag.ErrorMessage = "Đã xảy ra lỗi khi cập nhật thông tin. Vui lòng thử lại.";
                     return View("ChangePassword", model);
                 }
-            }
-        }
-        public class RedirectIfAuthenticatedAttribute : ActionFilterAttribute
-        {
-            public override void OnActionExecuting(ActionExecutingContext context)
-            {
-                var user = context.HttpContext.User;
-                if (user?.Identity != null && user.Identity.IsAuthenticated)
-                {
-                    context.Result = new RedirectToActionResult("Index", "Home", null);
-                }
-
-                base.OnActionExecuting(context);
             }
         }
     }

@@ -6,6 +6,7 @@ using Event_Tree_Website.ViewModels;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
 using Imgur.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ using Image = Event_Tree_Website.Models.Image;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "0")]
     public class PersonalEventController : Controller
     {
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
-
 
         public PersonalEventController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {

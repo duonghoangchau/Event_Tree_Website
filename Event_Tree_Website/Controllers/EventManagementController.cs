@@ -16,6 +16,7 @@ using Image = Event_Tree_Website.Models.Image;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "1,2")]
     public class EventManagementController : Controller
     {
         private readonly Event_TreeContext _context;
