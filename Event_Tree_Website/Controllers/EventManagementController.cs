@@ -6,6 +6,7 @@ using Event_Tree_Website.ViewModels;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
 using Imgur.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 //using Microsoft.Build.Tasks.Deployment.Bootstrapper;
@@ -39,7 +40,7 @@ namespace Event_Tree_Website.Controllers
             ViewBag.IdCategory = list;
         }
 
-
+        [Authorize(Roles = "1,2")]
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
