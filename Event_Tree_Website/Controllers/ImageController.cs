@@ -1,13 +1,8 @@
 ﻿using Event_Tree_Website.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
 using Imgur.API.Models;
-using System.Net.Http;
 using System.Text;
 using Image = Event_Tree_Website.Models.Image;
 using Event_Tree_Website.ViewModels;

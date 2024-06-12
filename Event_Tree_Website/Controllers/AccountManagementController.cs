@@ -10,27 +10,29 @@ namespace Event_Tree_Website.Controllers
     [Authorize(Roles = "2")]
     public class AccountManagementController : Controller
     {
-        private readonly Event_TreeContext db;
-        public AccountManagementController(Event_TreeContext _db)
+        private readonly Event_TreeContext _db;
+
+        public AccountManagementController(Event_TreeContext db)
         {
-            db = _db;
+            _db = db;
         }
 
         public async Task<IActionResult> _MenuPartial()
         {
             return PartialView();
         }
+
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            var totalItems = await db.Users.CountAsync();
+            var totalItems = await _db.Users.CountAsync();
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            var users = await db.Users.Skip((page - 1) * pageSize)
-                                                .Take(pageSize)
-                                                .ToListAsync();
-            var menus = await db.Menus.Where(m => m.Hide == 0).ToListAsync();
+            var users = await _db.Users.Skip((page - 1) * pageSize)
+                                       .Take(pageSize)
+                                       .ToListAsync();
+            var menus = await _db.Menus.Where(m => m.Hide == 0).ToListAsync();
 
             var viewModel = new AccountViewModel
             {
@@ -42,6 +44,7 @@ namespace Event_Tree_Website.Controllers
 
             return View(viewModel);
         }
+
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -50,14 +53,13 @@ namespace Event_Tree_Website.Controllers
                 return NotFound();
             }
 
-            // Lấy thông tin đơn hàng từ database
-            var user = await db.Users.FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _db.Users.FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var menus = await db.Menus.Where(m => m.Hide == 0).ToListAsync();
+            var menus = await _db.Menus.Where(m => m.Hide == 0).ToListAsync();
             var hideOptions = new List<SelectListItem>
             {
                 new SelectListItem { Value = "true", Text = "Hiển Thị" },
@@ -69,6 +71,7 @@ namespace Event_Tree_Website.Controllers
                 new SelectListItem { Value = "1", Text = "Quản Lý" },
                 new SelectListItem { Value = "2", Text = "Admin" }
             };
+
             var viewModel = new AccountViewModel
             {
                 Menus = menus,
@@ -76,23 +79,27 @@ namespace Event_Tree_Website.Controllers
                 HideOptions = hideOptions,
                 PerOptions = perOptions
             };
+
             return View(viewModel);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Password,Fullname,Email,Birthday,Role,Status")] User user)
         {
-            var menus = await db.Menus.Where(m => m.Hide == 0).ToListAsync();
-            var user1 = await db.Users.FirstOrDefaultAsync(m => m.Id == id);
-            if (user1 == null)
+            var menus = await _db.Menus.Where(m => m.Hide == 0).ToListAsync();
+            var existingUser = await _db.Users.FirstOrDefaultAsync(m => m.Id == id);
+            if (existingUser == null)
             {
                 return NotFound();
             }
+
             var viewModel = new AccountViewModel
             {
                 Menus = menus,
-                User = user1
+                User = existingUser
             };
+
             if (id != viewModel.User.Id)
             {
                 return NotFound();
@@ -102,25 +109,12 @@ namespace Event_Tree_Website.Controllers
             {
                 try
                 {
-                    //    // Cập nhật thông tin đơn hàng vào cơ sở dữ liệu
-                    //    _context.Update(viewModel.Catology); // Cập nhật thông tin đơn hàng
-                    //    await _context.SaveChangesAsync(); // Lưu các thay đổi vào cơ sở dữ liệu
-                    var existingCatology = await db.Users.FindAsync(id);
+                    existingUser.Role = user.Role;
+                    existingUser.Status = user.Status;
 
-                    if (existingCatology == null)
-                    {
-                        return NotFound();
-                    }
-
-                    // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
-                    existingCatology.Role = user.Role;
-                    existingCatology.Status = user.Status;
-
-
-                    // Lưu các thay đổi vào cơ sở dữ liệu
-                    await db.SaveChangesAsync();
+                    await _db.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Cập nhật thông tin thành công.";
-                    return RedirectToAction("Index"); // Điều hướng đến trang chính sau khi chỉnh sửa thành công
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -133,16 +127,14 @@ namespace Event_Tree_Website.Controllers
                         throw;
                     }
                 }
-
             }
-
-            // Tạo view model và truyền dữ liệu
 
             return View(viewModel);
         }
+
         private bool UserExists(int id)
         {
-            return db.Users.Any(e => e.Id == id);
+            return _db.Users.Any(e => e.Id == id);
         }
     }
 }

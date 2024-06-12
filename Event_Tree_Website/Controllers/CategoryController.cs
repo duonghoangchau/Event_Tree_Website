@@ -20,21 +20,24 @@ namespace Event_Tree_Website.Controllers
             _context = context;
             _hostingEnvironment = hostingEnvironment;
         }
+
         public async Task<IActionResult> _MenuPartial()
         {
             return PartialView();
         }
+
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            var totalItems = await _context.Categories.CountAsync(); // Tổng số sản phẩm
+            var totalItems = await _context.Categories.CountAsync();
 
-            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize); // Tính tổng số trang
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
             var cats = await _context.Categories
-                                                .Skip((page - 1) * pageSize)
-                                                .Take(pageSize)
-                                                .ToListAsync(); // Lấy sản phẩm cho trang hiện tại
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
             var viewModel = new CategoryViewModel
@@ -45,12 +48,12 @@ namespace Event_Tree_Website.Controllers
                 CurrentPage = page
             };
 
-            return View(viewModel); // Trả về view với AdminViewModel
+            return View(viewModel);
         }
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             return View(new CategoryViewModel { Menus = menus });
         }
@@ -60,18 +63,18 @@ namespace Event_Tree_Website.Controllers
         {
             category.Hide = 0;
             category.IdParent = "0";
-            var viewModel = new CategoryViewModel
-            {
-                Category = category
-            };
+
             _context.Add(category);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
+
             if (id == null)
             {
                 return NotFound();
@@ -82,11 +85,13 @@ namespace Event_Tree_Website.Controllers
             {
                 return NotFound();
             }
+
             var viewModel = new CategoryViewModel
             {
                 Category = category,
                 Menus = menus
             };
+
             return View(viewModel);
         }
 
@@ -98,7 +103,6 @@ namespace Event_Tree_Website.Controllers
                 return NotFound();
             }
 
-            // Lấy thông tin đơn hàng từ database
             var category = await _context.Categories.FirstOrDefaultAsync(m => m.IdCategory == id);
             if (category == null)
             {
@@ -107,16 +111,19 @@ namespace Event_Tree_Website.Controllers
 
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
-            var hideOptions = new List<SelectListItem>();
-            hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
-            hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
-            // Tạo view model và truyền dữ liệu
+            var hideOptions = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "0", Text = "Hiển Thị" },
+                new SelectListItem { Value = "1", Text = "Ẩn" }
+            };
+
             var viewModel = new CategoryViewModel
             {
                 Menus = menus,
                 Category = category,
                 HideOptions = hideOptions
             };
+
             return View(viewModel);
         }
 
@@ -125,17 +132,19 @@ namespace Event_Tree_Website.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("IdCategory,Name,Order,Link,Hide,IdParent")] Category category)
         {
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
-            var categoryy = await _context.Categories.FirstOrDefaultAsync(m => m.IdCategory == id);
-            if (categoryy == null)
+
+            var existingCategory = await _context.Categories.FindAsync(id);
+            if (existingCategory == null)
             {
                 return NotFound();
             }
+
             var viewModel = new CategoryViewModel
             {
                 Menus = menus,
                 Category = category
-
             };
+
             if (id != viewModel.Category.IdCategory)
             {
                 return NotFound();
@@ -145,24 +154,15 @@ namespace Event_Tree_Website.Controllers
             {
                 try
                 {
-                    var existingCategory = await _context.Categories.FindAsync(id);
-
-                    if (existingCategory == null)
-                    {
-                        return NotFound();
-                    }
-
-                    // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
                     existingCategory.Name = category.Name;
                     existingCategory.Order = category.Order;
                     existingCategory.Link = category.Link;
                     existingCategory.Hide = category.Hide;
                     existingCategory.IdParent = category.IdParent;
 
-                    // Lưu các thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Cập nhật danh mục thành công.";
-                    return RedirectToAction("Index"); // Điều hướng đến trang chính sau khi chỉnh sửa thành công
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -175,19 +175,15 @@ namespace Event_Tree_Website.Controllers
                         throw;
                     }
                 }
-
             }
-
-            // Tạo view model và truyền dữ liệu
 
             return View(viewModel);
         }
+
         private bool DanhMucExists(int id)
         {
             return _context.Categories.Any(e => e.IdCategory == id);
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> Search(int id)
@@ -206,22 +202,19 @@ namespace Event_Tree_Website.Controllers
                 Categorys = cat
             };
 
-            // Chuyển hướng đến trang Edit với IdCart tương ứng
             return RedirectToAction("Edit", new { id = cat.IdCategory });
         }
+
         [HttpPost]
         public async Task<IActionResult> Search(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
             {
-                // Nếu từ khóa trống, hiển thị tất cả sản phẩm
                 return RedirectToAction("Index");
             }
 
-            // Tạo phiên bản không dấu của từ khóa tìm kiếm
             string keywordWithoutDiacritics = RemoveDiacritics(keyword);
 
-            // Tìm kiếm cả từ có dấu và không dấu
             var cats = await _context.Categories
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.Order)
@@ -233,10 +226,10 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Cats = cats,
-                cateName = keyword // Dùng từ khóa có dấu để hiển thị lại trên giao diện
+                cateName = keyword
             };
 
-            return View("Index", viewModel); // Trả về view Index với dữ liệu đã lọc
+            return View("Index", viewModel);
         }
 
         private string RemoveDiacritics(string text)

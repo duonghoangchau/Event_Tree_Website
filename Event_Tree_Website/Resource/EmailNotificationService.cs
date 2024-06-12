@@ -15,7 +15,7 @@ public class EmailNotificationService : BackgroundService
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IConfiguration _configuration;
     private readonly ILogger<EmailNotificationService> _logger;
-    private readonly TimeSpan CheckInterval = TimeSpan.FromHours(24); // Kiểm tra mỗi 24 giờ
+    private readonly TimeSpan CheckInterval = TimeSpan.FromHours(24);
 
     public EmailNotificationService(IServiceScopeFactory serviceScopeFactory, IConfiguration configuration, ILogger<EmailNotificationService> logger)
     {

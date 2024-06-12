@@ -32,20 +32,16 @@ namespace Event_Tree_Website.Controllers
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            // Đếm tổng số sự kiện có Status = 1
             var totalItems = await _context.PersonalEvents.CountAsync();
 
-            // Tính tổng số trang
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            // Lấy danh sách sự kiện có Status = 1 cho trang hiện tại
             var pers = await _context.PersonalEvents
                                      .OrderByDescending(m => m.DateTime)
                                      .Skip((page - 1) * pageSize)
                                      .Take(pageSize)
                                      .ToListAsync();
 
-            // Lấy danh sách menu không bị ẩn
             var menus = await _context.Menus
                                       .Where(m => m.Hide == 0)
                                       .OrderBy(m => m.MenuOrder)
@@ -62,7 +58,6 @@ namespace Event_Tree_Website.Controllers
                     eve.ImageCode = image.Url;
                 }
             }
-            // Tạo ViewModel
             var viewModel = new PersonalEventManagementViewModel
             {
                 Menus = menus,
@@ -70,9 +65,6 @@ namespace Event_Tree_Website.Controllers
                 TotalPages = totalPages,
                 CurrentPage = page,
             };
-
-            // Trả về view với PersonalEventViewModel
-
             return View(viewModel);
         }
         public async Task<IActionResult> _MenuPartial()
@@ -108,8 +100,6 @@ namespace Event_Tree_Website.Controllers
                 Images = _context.Images.Where(i => i.ImageCode.Equals(per.ImageCode)).ToList(),
                 Personals = per
             };
-
-            // Chuyển hướng đến trang Edit với IdCart tương ứng
             return RedirectToAction("Edit", new { id = per.Id });
         }
         [HttpPost]
@@ -117,14 +107,10 @@ namespace Event_Tree_Website.Controllers
         {
             if (string.IsNullOrWhiteSpace(keyword))
             {
-                // Nếu từ khóa trống, hiển thị tất cả sản phẩm
                 return RedirectToAction("Index");
             }
-
-            // Tạo phiên bản không dấu của từ khóa tìm kiếm
             string keywordWithoutDiacritics = RemoveDiacritics(keyword);
 
-            // Tìm kiếm cả từ có dấu và không dấu
             var pers = await _context.PersonalEvents
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.DateTime)
@@ -148,10 +134,9 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Pers = pers,
-                cateName = keyword // Dùng từ khóa có dấu để hiển thị lại trên giao diện
+                cateName = keyword
             };
-
-            return View("Index", viewModel); // Trả về view Index với dữ liệu đã lọc
+            return View("Index", viewModel);
         }
 
         private string RemoveDiacritics(string text)
@@ -224,7 +209,6 @@ namespace Event_Tree_Website.Controllers
             var hideOptions = new List<SelectListItem>();
             hideOptions.Add(new SelectListItem { Value = "0", Text = "Hiển Thị" });
             hideOptions.Add(new SelectListItem { Value = "1", Text = "Ẩn" });
-            // Tạo view model và truyền dữ liệu
             var viewModel = new PersonalEventManagementViewModel
             {
                 Menus = menus,
@@ -274,20 +258,12 @@ namespace Event_Tree_Website.Controllers
                         return NotFound();
                     }
 
-
-                    // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
-
                     existingPersonalEvent.Hide = personals.Hide;
                     existingPersonalEvent.UpdatedAt = DateTime.Now;
 
-
-
-
-                    // Lưu các thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Cập nhật sự kiện thành công.";
-                    return RedirectToAction("Index"); // Điều hướng đến trang chính sau khi chỉnh sửa thành công
-                }
+                    return RedirectToAction("Index");
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!SukienExists(viewModel.Personals.Id))
@@ -299,17 +275,11 @@ namespace Event_Tree_Website.Controllers
                         throw;
                     }
                 }
-
             }
-
-            // Tạo view model và truyền dữ liệu
-
             return View(viewModel);
         }
         public async Task<IActionResult> Gmail()
         {
-
-            // Lấy danh sách menu không bị ẩn
             var menus = await _context.Menus
                                       .Where(m => m.Hide == 0)
                                       .OrderBy(m => m.MenuOrder)
@@ -318,9 +288,6 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus
             };
-
-            // Trả về view với PersonalEventViewModel
-
             return View(viewModel);
         }
         [HttpGet]
@@ -328,28 +295,21 @@ namespace Event_Tree_Website.Controllers
         {
             try
             {
-                // Lấy danh sách các sự kiện cá nhân sắp diễn ra trong 7 ngày tới
                 var upcomingEvents = await _context.PersonalEvents
                     .Where(e => e.DateTime >= DateTime.Today && e.DateTime <= DateTime.Today.AddDays(7))
                     .ToListAsync();
-
-                // Lặp qua từng sự kiện và gửi email thông báo
                 foreach (var personalEvent in upcomingEvents)
                 {
-                    // Lấy thông tin người dùng từ Id_user trong personalEvent
                     var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == personalEvent.IdUser);
 
-                    // Gửi email thông báo cho người dùng
                     if (user != null && !string.IsNullOrEmpty(user.Email))
                     {
                         string subject = "Thông báo sự kiện sắp diễn ra";
                         string body = $"Sự kiện '{personalEvent.Name}' sẽ diễn ra vào ngày {personalEvent.DateTime.ToShortDateString()}.";
 
-                        // Gửi email
                         SendEmail(user.Email, subject, body);
                     }
                 }
-
                 return Json(new { success = true, message = "Emails đã được gửi thành công." });
             }
             catch (Exception ex)
@@ -360,13 +320,11 @@ namespace Event_Tree_Website.Controllers
 
         private void SendEmail(string toEmail, string subject, string body)
         {
-            // Đọc cấu hình email từ tệp appsettings.json
             var fromEmail = _configuration["EmailSettings:FromEmail"];
             var emailPassword = _configuration["EmailSettings:EmailPassword"];
             var smtpHost = _configuration["EmailSettings:SmtpHost"];
             var smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"]);
 
-            // Tạo đối tượng MailMessage
             MailMessage mail = new MailMessage(fromEmail, toEmail)
             {
                 Subject = subject,
@@ -374,15 +332,12 @@ namespace Event_Tree_Website.Controllers
                 IsBodyHtml = true
             };
 
-            // Tạo đối tượng SmtpClient để gửi email
             SmtpClient smtpClient = new SmtpClient(smtpHost, smtpPort)
             {
                 UseDefaultCredentials = false,
                 Credentials = new System.Net.NetworkCredential(fromEmail, emailPassword),
-                EnableSsl = true // Sử dụng SSL để bảo vệ email
+                EnableSsl = true
             };
-
-            // Gửi email
             smtpClient.Send(mail);
         }
     }

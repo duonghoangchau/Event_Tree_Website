@@ -1,9 +1,7 @@
 ﻿using Event_Tree_Website.Models;
-//using Event_Tree_Website.Models.Authentication;
 using Event_Tree_Website.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace Event_Tree_Website.Controllers
 {

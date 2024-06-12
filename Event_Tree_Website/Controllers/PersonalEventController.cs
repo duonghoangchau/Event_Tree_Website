@@ -30,31 +30,21 @@ namespace Event_Tree_Website.Controllers
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
-            // Lấy id của người dùng hiện tại
             var userId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(userId))
             {
-                // Nếu không có người dùng đăng nhập, chuyển hướng đến trang đăng nhập
                 return RedirectToAction("Login", "Account");
             }
-
-            // Đếm tổng số sự kiện có Status = 1 và id_user = id của người dùng hiện tại
             var totalItems = await _context.PersonalEvents
                                             .Where(pe => pe.IdUser.ToString() == userId)
                                             .CountAsync();
-
-            // Tính tổng số trang
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-
-            // Lấy danh sách sự kiện có Status = 1 và id_user = id của người dùng hiện tại cho trang hiện tại
             var pers = await _context.PersonalEvents
                                     .Where(pe => pe.IdUser.ToString() == userId && pe.Hide == 0)
                                      .OrderByDescending(m => m.DateTime)
                                      .Skip((page - 1) * pageSize)
                                      .Take(pageSize)
                                      .ToListAsync();
-
-            // Lấy danh sách menu không bị ẩn
             var menus = await _context.Menus
                                       .Where(m => m.Hide == 0)
                                       .OrderBy(m => m.MenuOrder)
@@ -71,7 +61,6 @@ namespace Event_Tree_Website.Controllers
                     eve.ImageCode = image.Url;
                 }
             }
-            // Tạo ViewModel
             var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
@@ -99,23 +88,17 @@ namespace Event_Tree_Website.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Lấy id của người dùng hiện tại từ session
                 var userId = HttpContext.Session.GetString("UserId");
                 if (string.IsNullOrEmpty(userId))
                 {
-                    // Nếu không có người dùng đăng nhập, chuyển hướng đến trang đăng nhập
                     return RedirectToAction("Login", "Account");
                 }
 
-                // Gán id_user của người đăng nhập cho sự kiện mới
                 personals.IdUser = int.Parse(userId);
-
-                // Tiếp tục tạo sự kiện như bình thường
                 personals.Hide = 0;
                 personals.CreatedAt = DateTime.Now;
                 personals.UpdatedAt = DateTime.Now;
 
-                //showHideDropdownList();
                 if (files != null && files.Count > 0)
                 {
                     var filePaths = new List<string>();
@@ -123,7 +106,7 @@ namespace Event_Tree_Website.Controllers
                     {
                         if (formFile.Length > 0)
                         {
-                            var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf"); // Thay thế YOUR_CLIENT_ID và YOUR_CLIENT_SECRET bằng thông tin xác thực của bạn
+                            var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf");
                             var httpClient = new HttpClient();
 
                             var oAuth2Endpoint = new OAuth2Endpoint(apiClient, httpClient);
@@ -131,8 +114,8 @@ namespace Event_Tree_Website.Controllers
 
                             var token = new OAuth2Token
                             {
-                                AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb", // Thay thế YOUR_ACCESS_TOKEN bằng Access Token của bạn
-                                RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1", // Thay thế YOUR_REFRESH_TOKEN bằng Refresh Token của bạn
+                                AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb",
+                                RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1",
                                 AccountId = 180393165,
                                 AccountUsername = "lvxadoniss1",
                                 ExpiresIn = 315360000,
@@ -163,23 +146,16 @@ namespace Event_Tree_Website.Controllers
                                 }
                             }
                         }
-                    }/*
-                    // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
-                    if (filePaths.Count >= 1)
-                        personals.ImageCode = filePaths[0];*/
+                    }
                 }
-
-                // Tạo một đối tượng AdminViewModel từ Product
                 var viewModel = new PersonalEventViewModel
                 {
-                    Personals = personals // gán product vào AdminViewModel
+                    Personals = personals
                 };
                 _context.Add(personals);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            //showDropList();
             return View(personals);
         
 
@@ -215,8 +191,6 @@ namespace Event_Tree_Website.Controllers
                 Images = _context.Images.Where(i => i.ImageCode.Equals(per.ImageCode)).ToList(),
                 Personals = per
             };
-
-            // Chuyển hướng đến trang Edit với IdCart tương ứng
             return RedirectToAction("Edit", new { id = per.Id });
         }
         [HttpPost]
@@ -224,14 +198,10 @@ namespace Event_Tree_Website.Controllers
         {
             if (string.IsNullOrWhiteSpace(keyword))
             {
-                // Nếu từ khóa trống, hiển thị tất cả sản phẩm
                 return RedirectToAction("Index");
             }
-
-            // Tạo phiên bản không dấu của từ khóa tìm kiếm
             string keywordWithoutDiacritics = RemoveDiacritics(keyword);
 
-            // Tìm kiếm cả từ có dấu và không dấu
             var pers = await _context.PersonalEvents
                 .Where(p => p.Name.Contains(keyword) || p.Name.Contains(keywordWithoutDiacritics))
                 .OrderBy(m => m.DateTime)
@@ -253,10 +223,10 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Pers = pers,
-                cateName = keyword // Dùng từ khóa có dấu để hiển thị lại trên giao diện
+                cateName = keyword
             };
 
-            return View("Index", viewModel); // Trả về view Index với dữ liệu đã lọc
+            return View("Index", viewModel);
         }
 
         private string RemoveDiacritics(string text)
@@ -280,9 +250,6 @@ namespace Event_Tree_Website.Controllers
 
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
-
-
-
 
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
@@ -322,13 +289,9 @@ namespace Event_Tree_Website.Controllers
             {
                 return NotFound();
             }
-
-            // Cập nhật trạng thái "Hide" thành 1
             personalEvent.Hide = 1;
             _context.PersonalEvents.Update(personalEvent);
             await _context.SaveChangesAsync();
-
-            // Trả về một JSON cho phía client
             return Json(new { success = true });
         }
 
@@ -349,7 +312,6 @@ namespace Event_Tree_Website.Controllers
             }
             var menus = await _context.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
 
-            // Tạo view model và truyền dữ liệu
             var viewModel = new PersonalEventViewModel
             {
                 Menus = menus,
@@ -394,7 +356,7 @@ namespace Event_Tree_Website.Controllers
                         {
                             if (formFile.Length > 0)
                             {
-                                var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf"); // Thay thế YOUR_CLIENT_ID và YOUR_CLIENT_SECRET bằng thông tin xác thực của bạn
+                                var apiClient = new ApiClient("6efaec52e38d148", "5de13ec766f236d3d39808cb21fec395962922cf");
                                 var httpClient = new HttpClient();
 
                                 var oAuth2Endpoint = new OAuth2Endpoint(apiClient, httpClient);
@@ -402,8 +364,8 @@ namespace Event_Tree_Website.Controllers
 
                                 var token = new OAuth2Token
                                 {
-                                    AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb", // Thay thế YOUR_ACCESS_TOKEN bằng Access Token của bạn
-                                    RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1", // Thay thế YOUR_REFRESH_TOKEN bằng Refresh Token của bạn
+                                    AccessToken = "4e5b5d07a81334ea5c5459dc5c1ef63458c296eb",
+                                    RefreshToken = "6e653d2f3b7c99cb1c135f690c5b297b8a1555b1",
                                     AccountId = 180393165,
                                     AccountUsername = "lvxadoniss1",
                                     ExpiresIn = 315360000,
@@ -434,13 +396,7 @@ namespace Event_Tree_Website.Controllers
                                     }
                                 }
                             }
-                        }/*
-                        // Gán đường dẫn của ảnh tải lên cho các trường tương ứng trong đối tượng Product
-                        if (filePaths.Count >= 1)
-                        {
-                            // Không cần thêm tiền tố "images\" vào đường dẫn
-                            personals.ImageCode = filePaths[0];
-                        }*/
+                        }
 
                     }
 
@@ -450,8 +406,6 @@ namespace Event_Tree_Website.Controllers
                     {
                         return NotFound();
                     }
-
-                    // Cập nhật các trường của existingCatology với giá trị từ catology được gửi từ form
                     existingPersonalEvent.Name = personals.Name;
                     existingPersonalEvent.DateTime = personals.DateTime;
                     existingPersonalEvent.Description = personals.Description;
@@ -465,12 +419,9 @@ namespace Event_Tree_Website.Controllers
                     {
                         existingPersonalEvent.ImageCode = personals.ImageCode;
                     }
-
-
-                    // Lưu các thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Cập nhật sự kiện thành công.";
-                    return RedirectToAction("Index"); // Điều hướng đến trang chính sau khi chỉnh sửa thành công
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -483,14 +434,8 @@ namespace Event_Tree_Website.Controllers
                         throw;
                     }
                 }
-
             }
-
-            // Tạo view model và truyền dữ liệu
             return View(viewModel);
         }
-
-   
-
     }
 }
