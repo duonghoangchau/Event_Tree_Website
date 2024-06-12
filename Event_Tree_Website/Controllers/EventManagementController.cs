@@ -22,7 +22,7 @@ namespace Event_Tree_Website.Controllers
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-
+        
         public EventManagementController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
@@ -40,8 +40,6 @@ namespace Event_Tree_Website.Controllers
                                             .ToList();
             ViewBag.IdCategory = list;
         }
-
-        [Authorize(Roles = "1,2")]
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;
