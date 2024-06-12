@@ -40,7 +40,6 @@ namespace Event_Tree_Website.Controllers
                                             .ToList();
             ViewBag.IdCategory = list;
         }
-
         public async Task<IActionResult> Index(int page = 1)
         {
             const int pageSize = 10;

@@ -15,7 +15,6 @@ namespace Event_Tree_Website.Controllers
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-
         public CategoryController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;

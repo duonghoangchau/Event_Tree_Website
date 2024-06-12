@@ -8,6 +8,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Event_Tree_Website.ViewModels;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Event_Tree_Website.Controllers
 {
@@ -28,6 +30,10 @@ namespace Event_Tree_Website.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             var viewModel = new UserViewModel
             {
@@ -39,6 +45,11 @@ namespace Event_Tree_Website.Controllers
         [HttpGet]
         public async Task<IActionResult> Login()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
             var viewModel = new UserViewModel
             {
@@ -46,6 +57,7 @@ namespace Event_Tree_Website.Controllers
             };
             return View(viewModel);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -198,7 +210,6 @@ namespace Event_Tree_Website.Controllers
                         Email = email,
                         Role = 0,
                         Status = true,
-                       
                         Password = BCrypt.Net.BCrypt.HashPassword("RandomPassword"), // Set a random password
                     };
                     db.Users.Add(user);
@@ -218,7 +229,7 @@ namespace Event_Tree_Website.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
+        [Authorize]
         public async Task<IActionResult> Info()
         {
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();
@@ -319,8 +330,9 @@ namespace Event_Tree_Website.Controllers
                 }
             }
         }
-
+        
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ChangePassword(UserViewModel model)
         {
             var menus = await db.Menus.Where(m => m.Hide == 0).OrderBy(m => m.MenuOrder).ToListAsync();

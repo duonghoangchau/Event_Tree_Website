@@ -6,6 +6,7 @@ using Event_Tree_Website.ViewModels;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
 using Imgur.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ using Image = Event_Tree_Website.Models.Image;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "0")]
     public class PersonalEventController : Controller
     {
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
-
 
         public PersonalEventController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {
@@ -353,8 +354,7 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Personals = sukien,
-                Images = _context.Images.Where(i => i.ImageCode.Equals(sukien.ImageCode)).ToList(),
-              
+                Images = _context.Images.Where(i => i.ImageCode.Equals(sukien.ImageCode)).ToList()
             };
 
             return View(viewModel);
@@ -376,8 +376,7 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Personals = personal1,
-                Images = _context.Images.Where(i => i.ImageCode.Equals(personal1.ImageCode)).ToList(),
-                
+                Images = _context.Images.Where(i => i.ImageCode.Equals(personal1.ImageCode)).ToList()
             };
             if (id != viewModel.Personals.Id)
             {
