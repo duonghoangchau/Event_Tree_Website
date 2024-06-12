@@ -25,7 +25,10 @@
 
         <div class="row">
             <div class="col-md-12 text-center">
-                <img id="mainImage" src="~/images/@item.ImageCode" alt="Main Image" class="img-responsive main-image mx-auto d-block">
+                @foreach (var image in Model.Images)
+                {
+                    <img src="@image.Url" alt="Hình ảnh" style="max-width: 500px; max-height: 500px;" />
+                }
             </div>
         </div>
         <div class="row">

@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "1,2")]
     public class PersonalEventManagementController : Controller
     {
         private readonly Event_TreeContext _context;

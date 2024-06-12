@@ -6,6 +6,7 @@ using Event_Tree_Website.ViewModels;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
 using Imgur.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 //using Microsoft.Build.Tasks.Deployment.Bootstrapper;
@@ -15,12 +16,13 @@ using Image = Event_Tree_Website.Models.Image;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "1,2")]
     public class EventManagementController : Controller
     {
         private readonly Event_TreeContext _context;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
-
+        
         public EventManagementController(Event_TreeContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
@@ -38,7 +40,6 @@ namespace Event_Tree_Website.Controllers
                                             .ToList();
             ViewBag.IdCategory = list;
         }
-
 
         public async Task<IActionResult> Index(int page = 1)
         {

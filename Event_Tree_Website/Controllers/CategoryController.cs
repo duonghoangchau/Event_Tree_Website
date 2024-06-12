@@ -2,12 +2,14 @@
 using System.Text;
 using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "1,2")]
     public class CategoryController : Controller
     {
         private readonly Event_TreeContext _context;

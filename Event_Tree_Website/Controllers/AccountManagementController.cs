@@ -1,11 +1,13 @@
 ﻿using Event_Tree_Website.Models;
 using Event_Tree_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "2")]
     public class AccountManagementController : Controller
     {
         private readonly Event_TreeContext db;
