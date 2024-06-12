@@ -21,7 +21,7 @@ namespace Event_Tree_Website.Models
         public virtual DbSet<Image> Images { get; set; } = null!;
         public virtual DbSet<Menu> Menus { get; set; } = null!;
         public virtual DbSet<PersonalEvent> PersonalEvents { get; set; } = null!;
-        public virtual DbSet<Premium> Premiums { get; set; } = null!;
+     
         public virtual DbSet<Slider> Sliders { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -186,24 +186,7 @@ namespace Event_Tree_Website.Models
                     .HasConstraintName("FK_personalEvent_users");
             });
 
-            modelBuilder.Entity<Premium>(entity =>
-            {
-                entity.ToTable("premiums");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Description).HasColumnName("description");
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(100)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.PremiumLevel).HasColumnName("premium_level");
-
-                entity.Property(e => e.Price).HasColumnName("price");
-
-                entity.Property(e => e.ValidityPeriod).HasColumnName("validity_period");
-            });
+           
 
             modelBuilder.Entity<Slider>(entity =>
             {

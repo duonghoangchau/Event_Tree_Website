@@ -353,8 +353,8 @@ namespace Event_Tree_Website.Controllers
             {
                 Menus = menus,
                 Personals = sukien,
-                Images = _context.Images.Where(i => qi.ImageCode.Equals(sukien.ImageCode)).ToList(),
-                HideOptions = hideOptions
+                Images = _context.Images.Where(i => i.ImageCode.Equals(sukien.ImageCode)).ToList(),
+              
             };
 
             return View(viewModel);
@@ -377,7 +377,7 @@ namespace Event_Tree_Website.Controllers
                 Menus = menus,
                 Personals = personal1,
                 Images = _context.Images.Where(i => i.ImageCode.Equals(personal1.ImageCode)).ToList(),
-                HideOptions = hideOptions
+                
             };
             if (id != viewModel.Personals.Id)
             {

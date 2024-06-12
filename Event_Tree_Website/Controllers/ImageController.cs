@@ -12,9 +12,11 @@ using System.Text;
 using Image = Event_Tree_Website.Models.Image;
 using Event_Tree_Website.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Event_Tree_Website.Controllers
 {
+    [Authorize(Roles = "2")]
     public class ImageController : Controller
     {
         Event_TreeContext db = new Event_TreeContext();

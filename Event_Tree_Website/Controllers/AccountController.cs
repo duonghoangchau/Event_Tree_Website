@@ -198,7 +198,7 @@ namespace Event_Tree_Website.Controllers
                         Email = email,
                         Role = 0,
                         Status = true,
-                        Provide = 1,
+                       
                         Password = BCrypt.Net.BCrypt.HashPassword("RandomPassword"), // Set a random password
                     };
                     db.Users.Add(user);
